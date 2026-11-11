@@ -28,6 +28,7 @@ Aplikasi ini menggunakan pola arsitektur **Model-View-Controller (MVC)** untuk m
     *   `Transaksi.java` (id_transaksi, datetime, total_belanja, tunai, id_user)
     *   `DetailTransaksi.java` (id_detail, id_transaksi, id_buku, jumlah, subtotal)
     *   `LogInventori.java` (id_log, id_buku, id_user, datetime, desc, type)
+    *   `users` (id, username, password, role)
 *   **`config` (Koneksi Database):**
     *   `DatabaseConnection.java` (Membuka koneksi JDBC ke MySQL)
 *   **`controller` (Logika Bisnis):**
@@ -64,7 +65,7 @@ Database bernama `db_bookapp` dengan 5 tabel utama:
 ### 3. Tabel `transaksi` (Header Pembelian)
 | Kolom | Tipe Data | Keterangan |
 | :--- | :--- | :--- |
-| `id_transaksi` | INT (11) | Primary Key (Contoh: TRX-231104-001) |
+| `id_transaksi` | INT (11) | Primary Key |
 | `datetime` | DATETIME | Waktu transaksi |
 | `total_belanja`| DECIMAL (10,2) | Total harga semua item |
 | `tunai` | DECIMAL (10,2) | Uang pembayaran pelanggan |
@@ -75,7 +76,7 @@ Database bernama `db_bookapp` dengan 5 tabel utama:
 | :--- | :--- | :--- |
 | `id_detail` | INT (11) | Primary Key, Auto Increment |
 | `id_transaksi` | INT (11) | Foreign Key ➔ `transaksi.id_transaksi` |
-| `id_buku` | VARCHAR (20) | Foreign Key ➔ `buku.id_buku` |
+| `id_buku` | INT(11) | Foreign Key ➔ `buku.id_buku` |
 | `jumlah` | INT (5) | Kuantitas buku dibeli |
 | `subtotal` | DECIMAL (10,2) | `jumlah` * `harga` saat transaksi |
 

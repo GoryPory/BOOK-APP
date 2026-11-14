@@ -29,18 +29,60 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        bukuPanel1 = new bookapp.bookapp.panel.BukuPanel();
+        kasirPanel1 = new bookapp.bookapp.panel.KasirPanel();
+        laporanPanel1 = new bookapp.bookapp.panel.LaporanPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        javax.swing.GroupLayout bukuPanel1Layout = new javax.swing.GroupLayout(bukuPanel1);
+        bukuPanel1.setLayout(bukuPanel1Layout);
+        bukuPanel1Layout.setHorizontalGroup(
+            bukuPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        bukuPanel1Layout.setVerticalGroup(
+            bukuPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 265, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Buku", bukuPanel1);
+
+        javax.swing.GroupLayout kasirPanel1Layout = new javax.swing.GroupLayout(kasirPanel1);
+        kasirPanel1.setLayout(kasirPanel1Layout);
+        kasirPanel1Layout.setHorizontalGroup(
+            kasirPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        kasirPanel1Layout.setVerticalGroup(
+            kasirPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 265, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Kasir", kasirPanel1);
+
+        javax.swing.GroupLayout laporanPanel1Layout = new javax.swing.GroupLayout(laporanPanel1);
+        laporanPanel1.setLayout(laporanPanel1Layout);
+        laporanPanel1Layout.setHorizontalGroup(
+            laporanPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        laporanPanel1Layout.setVerticalGroup(
+            laporanPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 265, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Laporan", laporanPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
 
         pack();
@@ -72,6 +114,9 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private bookapp.bookapp.panel.BukuPanel bukuPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private bookapp.bookapp.panel.KasirPanel kasirPanel1;
+    private bookapp.bookapp.panel.LaporanPanel laporanPanel1;
     // End of variables declaration//GEN-END:variables
 }

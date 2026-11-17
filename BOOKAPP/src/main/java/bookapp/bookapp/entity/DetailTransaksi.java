@@ -13,14 +13,14 @@ public class DetailTransaksi {
     private int idDetail;
     private String idTransaksi;
     private int idBuku;
-    private double jumlah;
+    private int jumlah;
     private double subTotal;
     
     public DetailTransaksi() {
         
     }
     
-    public DetailTransaksi(int idDetail, String idTransaksi, int idBuku, double jumlah, double subTotal) {
+    public DetailTransaksi(int idDetail, String idTransaksi, int idBuku, int jumlah, double subTotal) {
         this.idDetail = idDetail;
         this.idTransaksi = idTransaksi;
         this.idBuku = idBuku;
@@ -56,7 +56,7 @@ public class DetailTransaksi {
         return jumlah;
     }
 
-    public void setJumlah(double jumlah) {
+    public void setJumlah(int jumlah) {
         this.jumlah = jumlah;
     }
 

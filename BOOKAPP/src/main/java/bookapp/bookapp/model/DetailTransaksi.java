@@ -4,67 +4,23 @@
  */
 package bookapp.bookapp.model;
 
-
 /**
  *
- * @author Gori
+ * @author radit
  */
-public class DetailTransaksi {
-    private int idDetail;
-    private int idTransaksi;
-    private int idBuku;
-    private double jumlah;
-    private double subTotal;
+
+import java.util.List;
+
+public class DetailTransaksi implements Base<DetailTransaksi, Integer> {
+
+    @Override
+    public void create(DetailTransaksi item) {
+        // TODO: Implementasi simpan item ke detail_transaksi
+    }
+
+    public List<DetailTransaksi> searchByTransaksi(String idTransaksi) {
+        // TODO: SELECT * FROM detail_transaksi WHERE id_transaksi = ?
+        return null;
+    }
     
-    public DetailTransaksi() {
-        
-    }
-    
-    public DetailTransaksi(int idDetail, int idTransaksi, int idBuku, double jumlah, double subTotal) {
-        this.idDetail = idDetail;
-        this.idTransaksi = idTransaksi;
-        this.idBuku = idBuku;
-        this.jumlah = jumlah;
-        this.subTotal = subTotal;
-    }
-
-    public int getIdDetail() {
-        return idDetail;
-    }
-
-    public void setIdDetail(int idDetail) {
-        this.idDetail = idDetail;
-    }
-
-    public int getIdTransaksi() {
-        return idTransaksi;
-    }
-
-    public void setIdTransaksi(int idTransaksi) {
-        this.idTransaksi = idTransaksi;
-    }
-
-    public int getIdBuku() {
-        return idBuku;
-    }
-
-    public void setIdBuku(int idBuku) {
-        this.idBuku = idBuku;
-    }
-
-    public double getJumlah() {
-        return jumlah;
-    }
-
-    public void setJumlah(double jumlah) {
-        this.jumlah = jumlah;
-    }
-
-    public double getSubTotal() {
-        return subTotal;
-    }
-
-    public void setSubTotal(double subTotal) {
-        this.subTotal = subTotal;
-    }
 }

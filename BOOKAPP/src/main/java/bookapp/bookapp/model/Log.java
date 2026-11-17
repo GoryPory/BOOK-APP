@@ -4,83 +4,23 @@
  */
 package bookapp.bookapp.model;
 
-
 /**
  *
- * @author Gori
+ * @author radit
  */
-public class Log {
-    
-    public enum typeAksi {
-        CREATE,
-        UPDATE,
-        DELETE
-    }
-    
-    private int idLog;
-    private int idUser;
-    private int idBuku;
-    private int cartId;
-    private String desc;
-    private typeAksi type;
+import java.util.List;
 
-    public Log() {
+public class Log implements Base<Log, Integer> {
+
+    @Override
+    public List<Log> readAll() {
+        // TODO: Implementasi SELECT * FROM log_inventori
+        return null; 
     }
 
-    public Log(int idLog, int idUser, int idBuku, int cartId, String desc, typeAksi type) {
-        this.idLog = idLog;
-        this.idUser = idUser;
-        this.idBuku = idBuku;
-        this.cartId = cartId;
-        this.desc = desc;
-        this.type = type;
-    }
-
-    public int getIdLog() {
-        return idLog;
-    }
-
-    public void setIdLog(int idLog) {
-        this.idLog = idLog;
-    }
-
-    public int getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
-    }
-
-    public int getIdBuku() {
-        return idBuku;
-    }
-
-    public void setIdBuku(int idBuku) {
-        this.idBuku = idBuku;
-    }
-
-    public int getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(int cartId) {
-        this.cartId = cartId;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public typeAksi getType() {
-        return type;
-    }
-
-    public void setType(typeAksi type) {
-        this.type = type;
+    @Override
+    public List<Log> search(String keyword) {
+        // TODO: (SURE/Opsional) Implementasi pencarian log
+        return null;
     }
 }

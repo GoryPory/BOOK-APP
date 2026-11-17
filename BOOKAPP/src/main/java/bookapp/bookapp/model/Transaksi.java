@@ -3,68 +3,34 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package bookapp.bookapp.model;
-import java.time.LocalDateTime;
 
 /**
  *
- * @author Gori
+ * @author radit
  */
-public class Transaksi {
-    private int idTransaksi;
-    private int idUser;
-    private double totalBelanja;
-    private double uangPembayaran;
-    private LocalDateTime datetime;
-    
-    public Transaksi() {
-        
-    }
-    
-    public Transaksi(int idTransaksi, int idUser, double totalBelanja, double uangPembayaran, LocalDateTime datetime) {
-        this.idTransaksi = idTransaksi;
-        this.idUser = idUser;
-        this.totalBelanja = totalBelanja;
-        this.uangPembayaran = uangPembayaran;
-        this.datetime = datetime;
+import java.util.List;
+
+public class Transaksi implements Base<Transaksi, String> { // Tipe ID Transaksi adalah String (VARCHAR)
+
+    @Override
+    public void create(Transaksi item) {
+        // TODO: Implementasi simpan transaksi baru
     }
 
-    public int getIdTransaksi() {
-        return idTransaksi;
+    @Override
+    public List<Transaksi> readAll() {
+        // TODO: Implementasi tampilkan semua riwayat transaksi
+        return null;
     }
 
-    public void setIdTransaksi(int idTransaksi) {
-        this.idTransaksi = idTransaksi;
+    @Override
+    public List<Transaksi> search(String keyword) {
+        // TODO: (SURE/Opsional) Pencarian transaksi
+        return null;
     }
 
-    public int getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
-    }
-
-    public double getTotalBelanja() {
-        return totalBelanja;
-    }
-
-    public void setTotalBelanja(double totalBelanja) {
-        this.totalBelanja = totalBelanja;
-    }
-
-    public double getUangPembayaran() {
-        return uangPembayaran;
-    }
-
-    public void setUangPembayaran(double uangPembayaran) {
-        this.uangPembayaran = uangPembayaran;
-    }
-
-    public LocalDateTime getDatetime() {
-        return datetime;
-    }
-
-    public void setDatetime(LocalDateTime datetime) {
-        this.datetime = datetime;
+    @Override
+    public void delete(String id) {
+        // TODO: (SURE) Implementasi Hapus Transaksi
     }
 }

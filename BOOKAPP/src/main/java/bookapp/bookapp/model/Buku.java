@@ -6,75 +6,36 @@ package bookapp.bookapp.model;
 
 /**
  *
- * @author Gori
+ * @author radit
  */
-public class Buku {
-    private int idBuku;
-    private String judul;
-    private String namaPenulis;
-    private double harga;
-    private int stock;
-    private int tahunTerbit;
-    
-    public Buku(){
-  
-    }
-    
-    public Buku(int idBuku, String judul, String namaPenulis, double harga, int stock, int tahunTerbit){
-        this.idBuku = idBuku;
-        this.judul = judul;
-        this.namaPenulis = namaPenulis;
-        this.harga = harga;
-        this.stock = stock;
-        this.tahunTerbit = tahunTerbit;
-    }
-    
-    public int getIdBuku() {
-        return idBuku;
+import java.util.List;
+
+public class Buku implements Base<Buku, Integer> { // Tipe ID Buku adalah Integer
+
+    @Override
+    public void create(Buku item) {
+        // TODO: Implementasi INSERT INTO buku
     }
 
-    public void setIdBuku(int idBuku) {
-        this.idBuku = idBuku;
+    @Override
+    public List<Buku> readAll() {
+        // TODO: Implementasi SELECT * FROM buku
+        return null;
     }
 
-    public String getJudul() {
-        return judul;
+    @Override
+    public List<Buku> search(String keyword) {
+        // TODO: Implementasi pencarian buku berdasarkan judul/penulis
+        return null;
     }
 
-    public void setJudul(String judul) {
-        this.judul = judul;
+    @Override
+    public void update(Buku item) {
+        // TODO: Implementasi UPDATE buku
     }
 
-    public String getNamaPenulis() {
-        return namaPenulis;
+    @Override
+    public void delete(Integer id) {
+        // TODO: Implementasi DELETE buku
     }
-
-    public void setNamaPenulis(String namaPenulis) {
-        this.namaPenulis = namaPenulis;
-    }
-
-    public double getHarga() {
-        return harga;
-    }
-
-    public void setHarga(double harga) {
-        this.harga = harga;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
-    public int getTahunTerbit() {
-        return tahunTerbit;
-    }
-
-    public void setTahunTerbit(int tahunTerbit) {
-        this.tahunTerbit = tahunTerbit;
-    }
-    
 }

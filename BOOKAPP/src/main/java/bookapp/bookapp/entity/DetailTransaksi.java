@@ -11,7 +11,7 @@ package bookapp.bookapp.entity;
  */
 public class DetailTransaksi {
     private int idDetail;
-    private int idTransaksi;
+    private String idTransaksi;
     private int idBuku;
     private double jumlah;
     private double subTotal;
@@ -20,7 +20,7 @@ public class DetailTransaksi {
         
     }
     
-    public DetailTransaksi(int idDetail, int idTransaksi, int idBuku, double jumlah, double subTotal) {
+    public DetailTransaksi(int idDetail, String idTransaksi, int idBuku, double jumlah, double subTotal) {
         this.idDetail = idDetail;
         this.idTransaksi = idTransaksi;
         this.idBuku = idBuku;
@@ -36,11 +36,11 @@ public class DetailTransaksi {
         this.idDetail = idDetail;
     }
 
-    public int getIdTransaksi() {
+    public String getIdTransaksi() {
         return idTransaksi;
     }
 
-    public void setIdTransaksi(int idTransaksi) {
+    public void setIdTransaksi(String idTransaksi) {
         this.idTransaksi = idTransaksi;
     }
 

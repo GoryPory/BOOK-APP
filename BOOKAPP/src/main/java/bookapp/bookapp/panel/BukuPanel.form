@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -39,8 +39,8 @@
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="txtHarga" alignment="0" max="32767" attributes="0"/>
-                          <Component id="labelHarga" alignment="0" max="32767" attributes="0"/>
+                          <Component id="txtTahunTerbit" alignment="0" max="32767" attributes="0"/>
+                          <Component id="labelTahunTerbit" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -50,8 +50,8 @@
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="txtHarga1" max="32767" attributes="0"/>
-                          <Component id="labelHarga1" max="32767" attributes="0"/>
+                          <Component id="txtHarga" max="32767" attributes="0"/>
+                          <Component id="labelHarga" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnCreate" min="-2" max="-2" attributes="0"/>
@@ -93,9 +93,9 @@
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="labelHarga" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelTahunTerbit" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="txtHarga" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtTahunTerbit" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="labelStok" min="-2" max="-2" attributes="0"/>
@@ -107,9 +107,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="btnCreate" alignment="1" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Component id="labelHarga1" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelHarga" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="txtHarga1" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtHarga" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
                   <Component id="btnUpdate" max="32767" attributes="0"/>
@@ -219,12 +219,12 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="labelHarga">
+    <Component class="javax.swing.JLabel" name="labelTahunTerbit">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Harga Buku"/>
+        <Property name="text" type="java.lang.String" value="Tahun Terbit"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtHarga">
+    <Component class="javax.swing.JTextField" name="txtTahunTerbit">
     </Component>
     <Component class="javax.swing.JLabel" name="labelStok">
       <Properties>
@@ -238,12 +238,12 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="labelHarga1">
+    <Component class="javax.swing.JLabel" name="labelHarga">
       <Properties>
         <Property name="text" type="java.lang.String" value="Harga Buku"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtHarga1">
+    <Component class="javax.swing.JTextField" name="txtHarga">
     </Component>
     <Component class="javax.swing.JButton" name="btnUpdate">
       <Properties>

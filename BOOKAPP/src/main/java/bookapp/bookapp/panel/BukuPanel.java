@@ -35,12 +35,12 @@ public class BukuPanel extends javax.swing.JPanel {
         txtJudul = new javax.swing.JTextField();
         labelPenulis = new javax.swing.JLabel();
         txtPenulis = new javax.swing.JTextField();
-        labelHarga = new javax.swing.JLabel();
-        txtHarga = new javax.swing.JTextField();
+        labelTahunTerbit = new javax.swing.JLabel();
+        txtTahunTerbit = new javax.swing.JTextField();
         labelStok = new javax.swing.JLabel();
         txtStok = new javax.swing.JTextField();
-        labelHarga1 = new javax.swing.JLabel();
-        txtHarga1 = new javax.swing.JTextField();
+        labelHarga = new javax.swing.JLabel();
+        txtHarga = new javax.swing.JTextField();
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnCreate = new javax.swing.JButton();
@@ -80,13 +80,13 @@ public class BukuPanel extends javax.swing.JPanel {
 
         txtPenulis.setPreferredSize(new java.awt.Dimension(1, 26));
 
-        labelHarga.setText("Harga Buku");
+        labelTahunTerbit.setText("Tahun Terbit");
 
         labelStok.setText("Stok Buku");
 
         txtStok.setPreferredSize(new java.awt.Dimension(1, 26));
 
-        labelHarga1.setText("Harga Buku");
+        labelHarga.setText("Harga Buku");
 
         btnUpdate.setText("UPDATE");
 
@@ -119,16 +119,16 @@ public class BukuPanel extends javax.swing.JPanel {
                             .addComponent(labelPenulis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtHarga)
-                            .addComponent(labelHarga, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(txtTahunTerbit)
+                            .addComponent(labelTahunTerbit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(10, 10, 10)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtStok, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(labelStok, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtHarga1)
-                            .addComponent(labelHarga1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(txtHarga)
+                            .addComponent(labelHarga, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCreate)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -161,9 +161,9 @@ public class BukuPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(labelHarga)
+                        .addComponent(labelTahunTerbit)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtHarga, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtTahunTerbit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(labelStok)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -172,9 +172,9 @@ public class BukuPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnCreate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(labelHarga1)
+                        .addComponent(labelHarga)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtHarga1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtHarga, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnDelete, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -200,15 +200,15 @@ public class BukuPanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane;
     private javax.swing.JLabel labelHarga;
-    private javax.swing.JLabel labelHarga1;
     private javax.swing.JLabel labelJudul;
     private javax.swing.JLabel labelPenulis;
     private javax.swing.JLabel labelStok;
+    private javax.swing.JLabel labelTahunTerbit;
     private javax.swing.JTextField txtHarga;
-    private javax.swing.JTextField txtHarga1;
     private javax.swing.JTextField txtJudul;
     private javax.swing.JTextField txtPenulis;
     private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField txtStok;
+    private javax.swing.JTextField txtTahunTerbit;
     // End of variables declaration//GEN-END:variables
 }

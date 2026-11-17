@@ -52,7 +52,7 @@ public class DetailTransaksi {
         this.idBuku = idBuku;
     }
 
-    public double getJumlah() {
+    public int getJumlah() {
         return jumlah;
     }
 

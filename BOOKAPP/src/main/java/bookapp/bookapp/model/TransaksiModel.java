@@ -10,21 +10,21 @@ package bookapp.bookapp.model;
  */
 import java.util.List;
 
-public class Transaksi implements Base<Transaksi, String> { // Tipe ID Transaksi adalah String (VARCHAR)
+public class TransaksiModel implements BaseModel<TransaksiModel, String> { // Tipe ID Transaksi adalah String (VARCHAR)
 
     @Override
-    public void create(Transaksi item) {
+    public void create(TransaksiModel item) {
         // TODO: Implementasi simpan transaksi baru
     }
 
     @Override
-    public List<Transaksi> readAll() {
+    public List<TransaksiModel> readAll() {
         // TODO: Implementasi tampilkan semua riwayat transaksi
         return null;
     }
 
     @Override
-    public List<Transaksi> search(String keyword) {
+    public List<TransaksiModel> search(String keyword) {
         // TODO: (SURE/Opsional) Pencarian transaksi
         return null;
     }

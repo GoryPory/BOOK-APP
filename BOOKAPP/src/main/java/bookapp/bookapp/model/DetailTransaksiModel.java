@@ -11,14 +11,14 @@ package bookapp.bookapp.model;
 
 import java.util.List;
 
-public class DetailTransaksi implements Base<DetailTransaksi, Integer> {
+public class DetailTransaksiModel implements BaseModel<DetailTransaksiModel, Integer> {
 
     @Override
-    public void create(DetailTransaksi item) {
+    public void create(DetailTransaksiModel item) {
         // TODO: Implementasi simpan item ke detail_transaksi
     }
 
-    public List<DetailTransaksi> searchByTransaksi(String idTransaksi) {
+    public List<DetailTransaksiModel> searchByTransaksi(String idTransaksi) {
         // TODO: SELECT * FROM detail_transaksi WHERE id_transaksi = ?
         return null;
     }

@@ -10,16 +10,16 @@ package bookapp.bookapp.model;
  */
 import java.util.List;
 
-public class Log implements Base<Log, Integer> {
+public class LogModel implements BaseModel<LogModel, Integer> {
 
     @Override
-    public List<Log> readAll() {
+    public List<LogModel> readAll() {
         // TODO: Implementasi SELECT * FROM log_inventori
         return null; 
     }
 
     @Override
-    public List<Log> search(String keyword) {
+    public List<LogModel> search(String keyword) {
         // TODO: (SURE/Opsional) Implementasi pencarian log
         return null;
     }

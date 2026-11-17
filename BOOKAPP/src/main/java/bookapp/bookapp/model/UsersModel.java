@@ -10,27 +10,27 @@ package bookapp.bookapp.model;
  */
 import java.util.List;
 
-public class Users implements Base<Users, Integer> {
+public class UsersModel implements BaseModel<UsersModel, Integer> {
 
     @Override
-    public void create(Users item) {
+    public void create(UsersModel item) {
         // TODO: Implementasi tambah user/kasir baru
     }
 
     @Override
-    public List<Users> readAll() {
+    public List<UsersModel> readAll() {
         // TODO: Implementasi ambil data semua user
         return null;
     }
 
     @Override
-    public List<Users> search(String keyword) {
+    public List<UsersModel> search(String keyword) {
         // TODO: Implementasi cari user
         return null;
     }
 
     @Override
-    public void update(Users item) {
+    public void update(UsersModel item) {
         // TODO: Implementasi ubah password/role user
     }
 

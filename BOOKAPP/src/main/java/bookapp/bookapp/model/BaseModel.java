@@ -10,7 +10,7 @@ package bookapp.bookapp.model;
  */
 import java.util.List;
 
-public interface Base<T, ID> {
+public interface BaseModel<T, ID> {
     default void create(T item) {
         throw new UnsupportedOperationException("Create tidak diizinkan untuk model ini.");
     }

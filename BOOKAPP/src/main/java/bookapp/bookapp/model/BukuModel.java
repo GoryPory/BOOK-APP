@@ -10,27 +10,27 @@ package bookapp.bookapp.model;
  */
 import java.util.List;
 
-public class Buku implements Base<Buku, Integer> { // Tipe ID Buku adalah Integer
+public class BukuModel implements BaseModel<BukuModel, Integer> { // Tipe ID Buku adalah Integer
 
     @Override
-    public void create(Buku item) {
+    public void create(BukuModel item) {
         // TODO: Implementasi INSERT INTO buku
     }
 
     @Override
-    public List<Buku> readAll() {
+    public List<BukuModel> readAll() {
         // TODO: Implementasi SELECT * FROM buku
         return null;
     }
 
     @Override
-    public List<Buku> search(String keyword) {
+    public List<BukuModel> search(String keyword) {
         // TODO: Implementasi pencarian buku berdasarkan judul/penulis
         return null;
     }
 
     @Override
-    public void update(Buku item) {
+    public void update(BukuModel item) {
         // TODO: Implementasi UPDATE buku
     }
 

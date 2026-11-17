@@ -8,29 +8,30 @@ package bookapp.bookapp.model;
  *
  * @author radit
  */
+import bookapp.bookapp.entity.Users;
 import java.util.List;
 
-public class UsersModel implements BaseModel<UsersModel, Integer> {
+public class UsersModel implements BaseModel<Users, Integer> {
 
     @Override
-    public void create(UsersModel item) {
+    public void create(Users item) {
         // TODO: Implementasi tambah user/kasir baru
     }
 
     @Override
-    public List<UsersModel> readAll() {
+    public List<Users> readAll() {
         // TODO: Implementasi ambil data semua user
         return null;
     }
 
     @Override
-    public List<UsersModel> search(String keyword) {
+    public List<Users> search(String keyword) {
         // TODO: Implementasi cari user
         return null;
     }
 
     @Override
-    public void update(UsersModel item) {
+    public void update(Users item) {
         // TODO: Implementasi ubah password/role user
     }
 

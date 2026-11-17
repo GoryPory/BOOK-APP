@@ -4,8 +4,6 @@
  */
 package bookapp.bookapp.entity;
 
-import bookapp.bookapp.model.*;
-
 
 /**
  *

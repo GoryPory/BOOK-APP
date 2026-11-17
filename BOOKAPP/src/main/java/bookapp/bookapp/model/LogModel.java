@@ -8,18 +8,19 @@ package bookapp.bookapp.model;
  *
  * @author radit
  */
+import bookapp.bookapp.entity.Log;
 import java.util.List;
 
-public class LogModel implements BaseModel<LogModel, Integer> {
+public class LogModel implements BaseModel<Log, Integer> {
 
     @Override
-    public List<LogModel> readAll() {
+    public List<Log> readAll() {
         // TODO: Implementasi SELECT * FROM log_inventori
         return null; 
     }
 
     @Override
-    public List<LogModel> search(String keyword) {
+    public List<Log> search(String keyword) {
         // TODO: (SURE/Opsional) Implementasi pencarian log
         return null;
     }

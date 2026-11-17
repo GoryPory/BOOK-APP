@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package bookapp.bookapp.entity;
-import bookapp.bookapp.model.*;
 import java.time.LocalDateTime;
 
 /**

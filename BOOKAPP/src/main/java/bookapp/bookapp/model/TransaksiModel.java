@@ -8,23 +8,24 @@ package bookapp.bookapp.model;
  *
  * @author radit
  */
+import bookapp.bookapp.entity.Transaksi;
 import java.util.List;
 
-public class TransaksiModel implements BaseModel<TransaksiModel, String> { // Tipe ID Transaksi adalah String (VARCHAR)
+public class TransaksiModel implements BaseModel<Transaksi, String> { // Tipe ID Transaksi adalah String (VARCHAR)
 
     @Override
-    public void create(TransaksiModel item) {
+    public void create(Transaksi item) {
         // TODO: Implementasi simpan transaksi baru
     }
 
     @Override
-    public List<TransaksiModel> readAll() {
+    public List<Transaksi> readAll() {
         // TODO: Implementasi tampilkan semua riwayat transaksi
         return null;
     }
 
     @Override
-    public List<TransaksiModel> search(String keyword) {
+    public List<Transaksi> search(String keyword) {
         // TODO: (SURE/Opsional) Pencarian transaksi
         return null;
     }

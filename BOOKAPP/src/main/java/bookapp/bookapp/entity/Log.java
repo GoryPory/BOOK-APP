@@ -9,18 +9,21 @@ package bookapp.bookapp.entity;
  *
  * @author Gori
  */
+import java.time.LocalDateTime;
+
 public class Log {
-    
+
     public enum typeAksi {
         CREATE,
         UPDATE,
         DELETE
     }
-    
+
     private int idLog;
     private int idUser;
     private int idBuku;
     private int cartId;
+    private LocalDateTime datetime;
     private String desc;
     private typeAksi type;
 
@@ -32,6 +35,15 @@ public class Log {
         this.idUser = idUser;
         this.idBuku = idBuku;
         this.cartId = cartId;
+        this.desc = desc;
+        this.type = type;
+    }
+
+    public Log(int idLog, int idUser, int idBuku, LocalDateTime datetime, String desc, typeAksi type) {
+        this.idLog = idLog;
+        this.idUser = idUser;
+        this.idBuku = idBuku;
+        this.datetime = datetime;
         this.desc = desc;
         this.type = type;
     }
@@ -66,6 +78,14 @@ public class Log {
 
     public void setCartId(int cartId) {
         this.cartId = cartId;
+    }
+
+    public LocalDateTime getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(LocalDateTime datetime) {
+        this.datetime = datetime;
     }
 
     public String getDesc() {

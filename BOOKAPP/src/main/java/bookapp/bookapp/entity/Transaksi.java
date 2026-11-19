@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * @author Gori
  */
 public class Transaksi {
-    private String idTransaksi;
+    private int idTransaksi;
     private int idUser;
     private double totalBelanja;
     private double uangPembayaran;
@@ -20,7 +20,7 @@ public class Transaksi {
         
     }
     
-    public Transaksi(String idTransaksi, int idUser, double totalBelanja, double uangPembayaran, LocalDateTime datetime) {
+    public Transaksi(int idTransaksi, int idUser, double totalBelanja, double uangPembayaran, LocalDateTime datetime) {
         this.idTransaksi = idTransaksi;
         this.idUser = idUser;
         this.totalBelanja = totalBelanja;
@@ -28,11 +28,11 @@ public class Transaksi {
         this.datetime = datetime;
     }
 
-    public String getIdTransaksi() {
+    public int getIdTransaksi() {
         return idTransaksi;
     }
 
-    public void setIdTransaksi(String idTransaksi) {
+    public void setIdTransaksi(int idTransaksi) {
         this.idTransaksi = idTransaksi;
     }
 

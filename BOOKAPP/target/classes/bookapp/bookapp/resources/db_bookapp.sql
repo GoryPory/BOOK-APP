@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS buku (
 );
 
 CREATE TABLE IF NOT EXISTS transaksi (
-    id_transaksi VARCHAR(50) PRIMARY KEY,
+    id_transaksi INT AUTO_INCREMENT PRIMARY KEY,
     datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     total_belanja DECIMAL(10, 2) NOT NULL,
     tunai DECIMAL(10, 2) NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS transaksi (
 
 CREATE TABLE IF NOT EXISTS detail_transaksi (
     id_detail INT AUTO_INCREMENT PRIMARY KEY,
-    id_transaksi VARCHAR(50) NOT NULL,
+    id_transaksi INT NOT NULL,
     id_buku INT NOT NULL,
     jumlah INT NOT NULL DEFAULT 1,
     subtotal DECIMAL(10, 2) NOT NULL,
@@ -57,9 +57,9 @@ INSERT INTO buku (judul, penulis, harga, stok, tahun_terbit) VALUES
     ('Atomic Habits', 'James Clear', 125000.00, 100, 2018);
 
 INSERT INTO transaksi (id_transaksi, total_belanja, tunai, id_user) VALUES
-    ('TRX-001', 170000.00, 200000.00, 2),
-    ('TRX-002', 125000.00, 125000.00, 2);
+    (1 , 170000.00, 200000.00, 2),
+    (2 , 125000.00, 125000.00, 2);
 
 INSERT INTO detail_transaksi (id_transaksi, id_buku, jumlah, subtotal) VALUES
-    ('TRX-001', 1, 2, 170000.00),
-    ('TRX-002', 3, 1, 125000.00);
+    (1 , 1, 2, 170000.00),
+    (2 , 3, 1, 125000.00);

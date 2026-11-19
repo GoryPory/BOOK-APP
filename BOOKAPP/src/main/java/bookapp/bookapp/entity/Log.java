@@ -22,21 +22,11 @@ public class Log {
     private int idLog;
     private int idUser;
     private int idBuku;
-    private int cartId;
     private LocalDateTime datetime;
     private String desc;
     private typeAksi type;
 
     public Log() {
-    }
-
-    public Log(int idLog, int idUser, int idBuku, int cartId, String desc, typeAksi type) {
-        this.idLog = idLog;
-        this.idUser = idUser;
-        this.idBuku = idBuku;
-        this.cartId = cartId;
-        this.desc = desc;
-        this.type = type;
     }
 
     public Log(int idLog, int idUser, int idBuku, LocalDateTime datetime, String desc, typeAksi type) {
@@ -70,14 +60,6 @@ public class Log {
 
     public void setIdBuku(int idBuku) {
         this.idBuku = idBuku;
-    }
-
-    public int getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(int cartId) {
-        this.cartId = cartId;
     }
 
     public LocalDateTime getDatetime() {

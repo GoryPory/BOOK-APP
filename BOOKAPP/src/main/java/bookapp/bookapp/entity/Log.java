@@ -16,7 +16,8 @@ public class Log {
     public enum typeAksi {
         CREATE,
         UPDATE,
-        DELETE
+        DELETE,
+        TRANSAKSI
     }
 
     private int idLog;

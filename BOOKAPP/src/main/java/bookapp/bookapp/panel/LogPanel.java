@@ -29,6 +29,7 @@ public class LogPanel extends javax.swing.JPanel {
         jScrollPane = new javax.swing.JScrollPane();
         logTable = new javax.swing.JTable();
         refresh = new javax.swing.JButton();
+        filterBox = new javax.swing.JComboBox<>();
 
         logTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -46,13 +47,18 @@ public class LogPanel extends javax.swing.JPanel {
         refresh.setText("Refresh");
         refresh.addActionListener(this::refreshActionPerformed);
 
+        filterBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Log", "Create Log", "Update Log", "Delete Log" }));
+        filterBox.addActionListener(this::filterBoxActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(filterBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(refresh)
                 .addContainerGap())
         );
@@ -60,7 +66,9 @@ public class LogPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(refresh)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(refresh)
+                    .addComponent(filterBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE))
         );
@@ -70,8 +78,13 @@ public class LogPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_refreshActionPerformed
 
+    private void filterBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_filterBoxActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> filterBox;
     private javax.swing.JScrollPane jScrollPane;
     private javax.swing.JTable logTable;
     private javax.swing.JButton refresh;

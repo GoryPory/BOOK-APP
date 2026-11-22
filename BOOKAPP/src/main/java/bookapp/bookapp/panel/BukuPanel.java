@@ -1,5 +1,18 @@
 package bookapp.bookapp.panel;
 
+import bookapp.bookapp.entity.Buku;
+import bookapp.bookapp.model.BukuModel;
+import java.beans.Beans;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
+import bookapp.bookapp.repo.CartRepo;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
@@ -11,11 +24,172 @@ package bookapp.bookapp.panel;
  */
 public class BukuPanel extends javax.swing.JPanel {
 
+    private final BukuModel bukuModel = new BukuModel();
+    private final NumberFormat rupiahFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+    private CartRepo cartRepo = CartRepo.getInstance();
+    private List<Buku> currentList = new ArrayList<>();
+    private Buku selectedBuku = null;
+    private Runnable onCartUpdated;
+
     /**
      * Creates new form BukuPanel
      */
     public BukuPanel() {
         initComponents();
+        setupPanel();
+    }
+
+    private void setupPanel() {
+        txtSearch.setText("");
+        bukuTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // Populate form fields whenever a table row is selected
+        bukuTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                onRowSelected();
+            }
+        });
+
+        // Skip DB queries inside NetBeans GUI Designer
+        if (!Beans.isDesignTime()) {
+            refreshTable();
+        }
+    }
+
+    public void setCartRepo(CartRepo cartRepo) {
+        if (cartRepo != null) {
+            this.cartRepo = cartRepo;
+        }
+    }
+
+    public void setOnCartUpdated(Runnable onCartUpdated) {
+        this.onCartUpdated = onCartUpdated;
+    }
+
+    public void refreshTable() {
+        try {
+            populateTable(bukuModel.readAll());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Gagal memuat data buku. Pastikan MySQL aktif.\nDetail: " + e.getMessage(),
+                    "Error Database",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    private void populateTable(List<Buku> books) {
+        currentList = (books != null) ? books : new ArrayList<>();
+        DefaultTableModel model = (DefaultTableModel) bukuTable.getModel();
+        model.setRowCount(0);
+
+        int no = 1;
+        for (Buku b : currentList) {
+            model.addRow(new Object[]{
+                no++,
+                b.getJudul(),
+                b.getNamaPenulis(),
+                rupiahFormat.format(b.getHarga()),
+                b.getStock(),
+                b.getTahunTerbit()
+            });
+        }
+        clearForm();
+    }
+
+    private void onRowSelected() {
+        int row = bukuTable.getSelectedRow();
+        if (row < 0 || row >= currentList.size()) {
+            selectedBuku = null;
+            return;
+        }
+
+        selectedBuku = currentList.get(row);
+        txtJudul.setText(selectedBuku.getJudul());
+        txtPenulis.setText(selectedBuku.getNamaPenulis());
+        txtTahunTerbit.setText(String.valueOf(selectedBuku.getTahunTerbit()));
+        txtStok.setText(String.valueOf(selectedBuku.getStock()));
+        txtHarga.setText(formatPlainNumber(selectedBuku.getHarga()));
+    }
+
+    private String formatPlainNumber(double value) {
+        return BigDecimal.valueOf(value).stripTrailingZeros().toPlainString();
+    }
+
+    private void clearForm() {
+        selectedBuku = null;
+        bukuTable.clearSelection();
+        txtJudul.setText("");
+        txtPenulis.setText("");
+        txtTahunTerbit.setText("");
+        txtStok.setText("");
+        txtHarga.setText("");
+    }
+
+    private Buku buildBukuFromForm(int idBuku) {
+        String judul = txtJudul.getText().trim();
+        String penulis = txtPenulis.getText().trim();
+        String tahunStr = txtTahunTerbit.getText().trim();
+        String stokStr = txtStok.getText().trim();
+        String hargaStr = txtHarga.getText().trim();
+
+        if (judul.isEmpty() || penulis.isEmpty() || tahunStr.isEmpty() || stokStr.isEmpty() || hargaStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Semua field buku wajib diisi.", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+
+        int tahunTerbit;
+        try {
+            tahunTerbit = Integer.parseInt(tahunStr);
+            if (tahunTerbit < 1000 || tahunTerbit > 9999) {
+                JOptionPane.showMessageDialog(this, "Tahun terbit harus berupa 4 digit angka (contoh: 2024).", "Validasi", JOptionPane.WARNING_MESSAGE);
+                return null;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Tahun terbit harus berupa angka.", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+
+        int stok;
+        try {
+            stok = Integer.parseInt(stokStr);
+            if (stok < 0) {
+                JOptionPane.showMessageDialog(this, "Stok tidak boleh negatif.", "Validasi", JOptionPane.WARNING_MESSAGE);
+                return null;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Stok harus berupa angka bulat.", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+
+        double harga;
+        try {
+            harga = Double.parseDouble(hargaStr);
+            if (harga < 0) {
+                JOptionPane.showMessageDialog(this, "Harga tidak boleh negatif.", "Validasi", JOptionPane.WARNING_MESSAGE);
+                return null;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Harga harus berupa angka (contoh: 85000).", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+
+        return new Buku(idBuku, judul, penulis, harga, stok, tahunTerbit);
+    }
+
+    private void performSearch() {
+        String keyword = txtSearch.getText().trim();
+        try {
+            List<Buku> result = keyword.isEmpty()
+                    ? bukuModel.readAll()
+                    : bukuModel.search(keyword);
+            populateTable(result);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal mencari buku: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            btnSearch.setSelected(false);
+        }
     }
 
     /**
@@ -187,27 +361,160 @@ public class BukuPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-        // TODO add your handling code here:
+        performSearch();
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
-        // TODO add your handling code here:
+        performSearch();
     }//GEN-LAST:event_txtSearchActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        if (selectedBuku == null) {
+            JOptionPane.showMessageDialog(this, "Pilih buku dari tabel terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Re-read latest stock from DB so cart checks stay accurate
+        Buku freshBuku = bukuModel.findById(selectedBuku.getIdBuku());
+        if (freshBuku == null) {
+            JOptionPane.showMessageDialog(this, "Data buku tidak ditemukan di database.", "Error", JOptionPane.ERROR_MESSAGE);
+            refreshTable();
+            return;
+        }
+
+        int alreadyInCart = cartRepo.getQuantityByBookId(freshBuku.getIdBuku());
+        int sisaStok = freshBuku.getStock() - alreadyInCart;
+
+        if (freshBuku.getStock() <= 0) {
+            JOptionPane.showMessageDialog(this, "Stok buku \"" + freshBuku.getJudul() + "\" habis.", "Stok Habis", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (sisaStok <= 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Semua stok buku \"" + freshBuku.getJudul() + "\" (" + alreadyInCart + ") sudah ada di keranjang.",
+                    "Stok Maksimal",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        String input = (String) JOptionPane.showInputDialog(
+                this,
+                "Masukkan jumlah untuk \"" + freshBuku.getJudul() + "\"\n(Stok tersedia untuk ditambah: " + sisaStok + ")",
+                "Tambah ke Keranjang",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                "1"
+        );
+
+        if (input == null) {
+            return; // User cancelled
+        }
+
+        int jumlah;
+        try {
+            jumlah = Integer.parseInt(input.trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Jumlah harus berupa angka bulat.", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (jumlah <= 0) {
+            JOptionPane.showMessageDialog(this, "Jumlah harus lebih dari 0.", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (jumlah > sisaStok) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Jumlah melebihi sisa stok tersedia (" + sisaStok + ").",
+                    "Stok Tidak Cukup",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        cartRepo.addItem(freshBuku, jumlah);
+
+        if (onCartUpdated != null) {
+            onCartUpdated.run();
+        }
+
+        JOptionPane.showMessageDialog(
+                this,
+                jumlah + "x \"" + freshBuku.getJudul() + "\" berhasil ditambahkan ke keranjang.\n"
+                        + "Total keranjang saat ini: " + rupiahFormat.format(cartRepo.total()),
+                "Berhasil",
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
-        // TODO add your handling code here:
+        Buku bukuBaru = buildBukuFromForm(0);
+        if (bukuBaru == null) {
+            return;
+        }
+
+        try {
+            bukuModel.create(bukuBaru);
+            JOptionPane.showMessageDialog(this, "Buku \"" + bukuBaru.getJudul() + "\" berhasil ditambahkan.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            refreshTable();
+        } catch (RuntimeException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Gagal Menambahkan Buku", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnCreateActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        // TODO add your handling code here:
+        if (selectedBuku == null) {
+            JOptionPane.showMessageDialog(this, "Pilih buku yang ingin diubah dari tabel terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Buku bukuUpdate = buildBukuFromForm(selectedBuku.getIdBuku());
+        if (bukuUpdate == null) {
+            return;
+        }
+
+        try {
+            bukuModel.update(bukuUpdate);
+            JOptionPane.showMessageDialog(this, "Data buku berhasil diperbarui.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            refreshTable();
+        } catch (RuntimeException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Gagal Mengubah Buku", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+        if (selectedBuku == null) {
+            JOptionPane.showMessageDialog(this, "Pilih buku yang ingin dihapus dari tabel terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Yakin ingin menghapus buku \"" + selectedBuku.getJudul() + "\"?",
+                "Konfirmasi Hapus",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        try {
+            bukuModel.delete(selectedBuku.getIdBuku());
+            JOptionPane.showMessageDialog(this, "Buku berhasil dihapus.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            refreshTable();
+        } catch (RuntimeException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Buku gagal dihapus. Buku yang sudah tercatat di transaksi tidak bisa dihapus.\nDetail: " + e.getMessage(),
+                    "Gagal Menghapus Buku",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
 

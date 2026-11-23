@@ -31,13 +31,14 @@ public class MainFrame extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         bukuPanel1 = new bookapp.bookapp.panel.BukuPanel();
         kasirPanel2 = new bookapp.bookapp.panel.KasirPanel();
-        laporanPanel2 = new bookapp.bookapp.panel.LaporanPanel();
+        laporanPanel = new bookapp.bookapp.panel.LaporanPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jTabbedPane1.addChangeListener(this::OnStateChanged);
         jTabbedPane1.addTab("Buku", bukuPanel1);
         jTabbedPane1.addTab("Kasir", kasirPanel2);
-        jTabbedPane1.addTab("Laporan", laporanPanel2);
+        jTabbedPane1.addTab("Laporan", laporanPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -54,6 +55,16 @@ public class MainFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void OnStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_OnStateChanged
+        int i = jTabbedPane1.getSelectedIndex();
+        
+        switch(i){
+            case 2:
+                laporanPanel.refresh();
+                break;
+        }
+    }//GEN-LAST:event_OnStateChanged
 
     /**
      * @param args the command line arguments
@@ -84,6 +95,6 @@ public class MainFrame extends javax.swing.JFrame {
     private bookapp.bookapp.panel.BukuPanel bukuPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private bookapp.bookapp.panel.KasirPanel kasirPanel2;
-    private bookapp.bookapp.panel.LaporanPanel laporanPanel2;
+    private bookapp.bookapp.panel.LaporanPanel laporanPanel;
     // End of variables declaration//GEN-END:variables
 }

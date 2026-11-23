@@ -34,6 +34,7 @@ public class LogPanel extends javax.swing.JPanel {
      */
     public LogPanel() {
         initComponents();
+        setupPanel();
     }
 
     private void setupPanel() {
@@ -184,11 +185,11 @@ public class LogPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
-        // TODO add your handling code here:
+        refreshData();
     }//GEN-LAST:event_refreshActionPerformed
 
     private void filterBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterBoxActionPerformed
-        // TODO add your handling code here:
+        refreshData();
     }//GEN-LAST:event_filterBoxActionPerformed
 
 

@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import bookapp.bookapp.repo.CartRepo;
+import bookapp.bookapp.repo.AuthRepo;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -20,7 +21,7 @@ import bookapp.bookapp.repo.CartRepo;
 
 /**
  *
- * @author rog
+ * @author gori
  */
 public class BukuPanel extends javax.swing.JPanel {
 
@@ -37,8 +38,15 @@ public class BukuPanel extends javax.swing.JPanel {
     public BukuPanel() {
         initComponents();
         setupPanel();
+        setAdminMode(AuthRepo.getInstance().isAdmin());
     }
-
+    
+    public void setAdminMode(boolean admin) {
+    btnCreate.setVisible(admin);
+    btnUpdate.setVisible(admin);
+    btnDelete.setVisible(admin);
+    } 
+    
     private void setupPanel() {
         txtSearch.setText("");
         bukuTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

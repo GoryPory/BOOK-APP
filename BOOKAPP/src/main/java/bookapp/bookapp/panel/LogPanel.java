@@ -4,19 +4,129 @@
  */
 package bookapp.bookapp.panel;
 
+import bookapp.bookapp.entity.Buku;
+import bookapp.bookapp.entity.Log;
+import bookapp.bookapp.entity.Users;
+import bookapp.bookapp.model.BukuModel;
+import bookapp.bookapp.model.LogModel;
+import bookapp.bookapp.model.UsersModel;
+import java.beans.Beans;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author rog
  */
 public class LogPanel extends javax.swing.JPanel {
 
+    private final LogModel logModel = new LogModel();
+    private final BukuModel bukuModel = new BukuModel();
+    private final UsersModel usersModel = new UsersModel();
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    
     /**
      * Creates new form LaporanPanel
      */
     public LogPanel() {
         initComponents();
+        setupPanel();
     }
 
+    private void setupPanel() {
+        logTable.setModel(new DefaultTableModel(
+                new Object[][]{},
+                new String[]{"No.", "Tanggal", "Judul Buku", "Nama Perubah", "Type", "Deskripsi"}
+        ) {
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return false;
+            }
+        });
+
+        // Skip query DB saat membuka form di NetBeans GUI Designer
+        if (!Beans.isDesignTime()) {
+            refreshData();
+        }
+    }
+
+    public void refreshData() {
+        if (Beans.isDesignTime()) {
+            return;
+        }
+
+        try {
+            String selectedFilter = (String) filterBox.getSelectedItem();
+            List<Log> logs = fetchLogsByFilter(selectedFilter);
+
+            Map<Integer, String> bukuMap = buildBukuMap();
+            Map<Integer, String> userMap = buildUserMap();
+
+            DefaultTableModel model = (DefaultTableModel) logTable.getModel();
+            model.setRowCount(0);
+
+            int no = 1;
+            for (Log log : logs) {
+                String tanggal = log.getDatetime() != null
+                        ? log.getDatetime().format(dateFormatter)
+                        : "-";
+                String judulBuku = bukuMap.getOrDefault(log.getIdBuku(), "Buku #" + log.getIdBuku());
+                String namaPerubah = userMap.getOrDefault(log.getIdUser(), "User #" + log.getIdUser());
+                String tipe = log.getType() != null ? log.getType().name() : "-";
+
+                model.addRow(new Object[]{
+                    no++,
+                    tanggal,
+                    judulBuku,
+                    namaPerubah,
+                    tipe,
+                    log.getDesc()
+                });
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Gagal memuat data log. Pastikan MySQL aktif.\nDetail: " + e.getMessage(),
+                    "Error Database",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    private List<Log> fetchLogsByFilter(String selectedFilter) {
+        if (selectedFilter == null || selectedFilter.equals("All Log")) {
+            return logModel.readAll();
+        }
+
+        return switch (selectedFilter) {
+            case "Create Log" -> logModel.readByType(Log.typeAksi.CREATE);
+            case "Update Log" -> logModel.readByType(Log.typeAksi.UPDATE);
+            case "Delete Log" -> logModel.readByType(Log.typeAksi.DELETE);
+            case "Transaksi Log" -> logModel.readByType(Log.typeAksi.TRANSAKSI);
+            default -> logModel.readAll();
+        };
+    }
+
+    private Map<Integer, String> buildBukuMap() {
+        Map<Integer, String> map = new HashMap<>();
+        for (Buku b : bukuModel.readAll()) {
+            map.put(b.getIdBuku(), b.getJudul());
+        }
+        return map;
+    }
+
+    private Map<Integer, String> buildUserMap() {
+        Map<Integer, String> map = new HashMap<>();
+        for (Users u : usersModel.readAll()) {
+            map.put(u.getIdUser(), u.getUsername());
+        }
+        return map;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -75,11 +185,11 @@ public class LogPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
-        // TODO add your handling code here:
+        refreshData();
     }//GEN-LAST:event_refreshActionPerformed
 
     private void filterBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterBoxActionPerformed
-        // TODO add your handling code here:
+        refreshData();
     }//GEN-LAST:event_filterBoxActionPerformed
 
 

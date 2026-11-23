@@ -17,6 +17,15 @@ public class MainFrameAdmin extends javax.swing.JFrame {
      */
     public MainFrameAdmin() {
         initComponents();
+        setupTabListener();
+    }
+    
+    private void setupTabListener() {
+        jTabbedPane1.addChangeListener(e -> {
+            if (jTabbedPane1.getSelectedComponent() == logPanel1) {
+                logPanel1.refreshData();
+            }
+        });
     }
 
     /**

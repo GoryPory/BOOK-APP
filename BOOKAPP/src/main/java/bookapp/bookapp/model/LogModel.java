@@ -86,6 +86,26 @@ public class LogModel implements BaseModel<Log, Integer> {
         return list;
     }
 
+    public List<Log> readByType(Log.typeAksi type) {
+        List<Log> list = new ArrayList<>();
+        String sql = "SELECT id_log, id_user, id_buku, datetime, `desc`, type "
+                + "FROM log_inventori WHERE type = ? ORDER BY datetime DESC";
+        Connection conn = DatabaseConnection.getConnection();
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, type.name());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error memfilter log inventori: " + e.getMessage());
+        }
+        return list;
+    }
+    
     private Log mapRow(ResultSet rs) throws SQLException {
         Timestamp ts = rs.getTimestamp("datetime");
         return new Log(

@@ -4,17 +4,115 @@
  */
 package bookapp.bookapp.panel;
 
+import bookapp.bookapp.entity.Buku;
+import bookapp.bookapp.entity.CartItem;
+import bookapp.bookapp.entity.DetailTransaksi;
+import bookapp.bookapp.entity.Log;
+import bookapp.bookapp.entity.Transaksi;
+import bookapp.bookapp.entity.Users;
+import bookapp.bookapp.model.BukuModel;
+import bookapp.bookapp.model.DetailTransaksiModel;
+import bookapp.bookapp.model.LogModel;
+import bookapp.bookapp.model.TransaksiModel;
+import bookapp.bookapp.repo.AuthRepo;
+import bookapp.bookapp.repo.CartRepo;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.beans.Beans;
+import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author rog
  */
 public class KasirPanel extends javax.swing.JPanel {
-
+    private final TransaksiModel transaksiModel = new TransaksiModel();
+    private final DetailTransaksiModel detailTransaksiModel = new DetailTransaksiModel();
+    private final BukuModel bukuModel = new BukuModel();
+    private final LogModel logModel = new LogModel();
+    private final NumberFormat rupiahFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+    private CartRepo cartRepo = CartRepo.getInstance();
+    private Runnable onTransactionSuccess;
     /**
      * Creates new form KasirPanel
      */
     public KasirPanel() {
         initComponents();
+        setupPanel();
+    }
+
+    private void setupPanel() {
+        txtTotal.setEditable(false);
+        keranjangTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        keranjangTable.setModel(new DefaultTableModel(
+                new Object[][]{},
+                new String[]{"No.", "Judul Buku", "Harga", "Jumlah", "Subtotal"}
+        ) {
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return false;
+            }
+        });
+
+        // Auto-refresh cart whenever this tab becomes visible
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                refreshCart();
+            }
+        });
+
+        if (!Beans.isDesignTime()) {
+            refreshCart();
+        }
+    }
+
+    public void setCartRepo(CartRepo cartRepo) {
+        if (cartRepo != null) {
+            this.cartRepo = cartRepo;
+            refreshCart();
+        }
+    }
+
+    public void setOnTransactionSuccess(Runnable onTransactionSuccess) {
+        this.onTransactionSuccess = onTransactionSuccess;
+    }
+
+    public void refreshCart() {
+        if (Beans.isDesignTime()) {
+            return;
+        }
+
+        DefaultTableModel model = (DefaultTableModel) keranjangTable.getModel();
+        model.setRowCount(0);
+
+        int no = 1;
+        for (CartItem item : cartRepo.getCart()) {
+            Buku b = item.getBuku();
+            model.addRow(new Object[]{
+                no++,
+                b.getJudul(),
+                rupiahFormat.format(b.getHarga()),
+                item.getJmlh(),
+                rupiahFormat.format(item.subTotal())
+            });
+        }
+
+        txtTotal.setText(rupiahFormat.format(cartRepo.total()));
+    }
+
+    public void resetCart() {
+        cartRepo.clear();
+        txtTunai.setText("");
+        refreshCart();
     }
 
     /**
@@ -100,7 +198,132 @@ public class KasirPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBayarActionPerformed
-        // TODO add your handling code here:
+        List<CartItem> items = new ArrayList<>(cartRepo.getCart());
+        if (items.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Keranjang masih kosong. Tambahkan buku terlebih dahulu.", "Keranjang Kosong", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Users currentUser = AuthRepo.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            JOptionPane.showMessageDialog(this, "Sesi login tidak ditemukan. Silakan login kembali.", "Autentikasi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String tunaiStr = txtTunai.getText().trim();
+        if (tunaiStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Masukkan jumlah uang tunai terlebih dahulu.", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        double tunai;
+        try {
+            tunai = Double.parseDouble(tunaiStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Nominal tunai harus berupa angka (contoh: 200000).", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        double totalBelanja = cartRepo.total();
+        if (tunai < totalBelanja) {
+            double kurang = totalBelanja - tunai;
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Uang tunai tidak cukup.\nKurang: " + rupiahFormat.format(kurang),
+                    "Pembayaran Gagal",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        // Validate live stock in DB for every cart item before creating any record
+        for (CartItem item : items) {
+            Buku freshBuku = bukuModel.findById(item.getBuku().getIdBuku());
+            if (freshBuku == null) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Buku \"" + item.getBuku().getJudul() + "\" sudah tidak ada di database.",
+                        "Error Stok",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+            if (freshBuku.getStock() < item.getJmlh()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Stok buku \"" + freshBuku.getJudul() + "\" tidak mencukupi.\n"
+                                + "Diminta: " + item.getJmlh() + ", Tersedia: " + freshBuku.getStock(),
+                        "Stok Tidak Cukup",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+        }
+
+        try {
+            LocalDateTime now = LocalDateTime.now();
+
+            // 1. Save Transaksi header (auto-fills generated idTransaksi)
+            Transaksi transaksi = new Transaksi(0, currentUser.getIdUser(), totalBelanja, tunai, now);
+            transaksiModel.create(transaksi);
+
+            // 2. Save each DetailTransaksi, deduct stock, and record TRANSAKSI log
+            for (CartItem item : items) {
+                int idBuku = item.getBuku().getIdBuku();
+                int jumlah = item.getJmlh();
+                double subtotal = item.subTotal();
+
+                DetailTransaksi detail = new DetailTransaksi(
+                        0,
+                        transaksi.getIdTransaksi(),
+                        idBuku,
+                        jumlah,
+                        subtotal
+                );
+                detailTransaksiModel.create(detail);
+
+                boolean stokUpdated = bukuModel.kurangiStok(idBuku, jumlah);
+                if (!stokUpdated) {
+                    throw new RuntimeException("Gagal mengurangi stok untuk buku \"" + item.getBuku().getJudul() + "\".");
+                }
+
+                Log log = new Log(
+                        0,
+                        currentUser.getIdUser(),
+                        idBuku,
+                        now,
+                        "Transaksi #" + transaksi.getIdTransaksi() + " - Terjual " + jumlah + "x " + item.getBuku().getJudul(),
+                        Log.typeAksi.TRANSAKSI
+                );
+                logModel.create(log);
+            }
+
+            double kembalian = tunai - totalBelanja;
+
+            // 3. Reset cart and refresh UI
+            resetCart();
+
+            if (onTransactionSuccess != null) {
+                onTransactionSuccess.run();
+            }
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Transaksi #" + transaksi.getIdTransaksi() + " berhasil!\n"
+                            + "Total Belanja : " + rupiahFormat.format(totalBelanja) + "\n"
+                            + "Tunai         : " + rupiahFormat.format(tunai) + "\n"
+                            + "Kembalian     : " + rupiahFormat.format(kembalian),
+                    "Pembayaran Berhasil",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        } catch (RuntimeException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Gagal memproses transaksi.\nDetail: " + e.getMessage(),
+                    "Error Transaksi",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }//GEN-LAST:event_btnBayarActionPerformed
 
 

@@ -17,6 +17,21 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
+        setupTabListener();
+    }
+
+    private void setupTabListener() {
+        bukuPanel1.setOnCartUpdated(() -> kasirPanel2.refreshCart());
+        kasirPanel2.setOnTransactionSuccess(() -> bukuPanel1.refreshTable());
+
+        jTabbedPane1.addChangeListener(e -> {
+            java.awt.Component selected = jTabbedPane1.getSelectedComponent();
+            if (selected == kasirPanel2) {
+                kasirPanel2.refreshCart();
+            } else if (selected == bukuPanel1) {
+                bukuPanel1.refreshTable();
+            }
+        });
     }
 
     /**

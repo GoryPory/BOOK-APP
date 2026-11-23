@@ -32,6 +32,7 @@ public class MainFrame extends javax.swing.JFrame {
         bukuPanel1 = new bookapp.bookapp.panel.BukuPanel();
         kasirPanel2 = new bookapp.bookapp.panel.KasirPanel();
         laporanPanel2 = new bookapp.bookapp.panel.LaporanPanel();
+        logoutPanel1 = new bookapp.bookapp.panel.LogoutPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -39,11 +40,26 @@ public class MainFrame extends javax.swing.JFrame {
         jTabbedPane1.addTab("Kasir", kasirPanel2);
         jTabbedPane1.addTab("Laporan", laporanPanel2);
 
+        javax.swing.GroupLayout logoutPanel1Layout = new javax.swing.GroupLayout(logoutPanel1);
+        logoutPanel1.setLayout(logoutPanel1Layout);
+        logoutPanel1Layout.setHorizontalGroup(
+            logoutPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 351, Short.MAX_VALUE)
+        );
+        logoutPanel1Layout.setVerticalGroup(
+            logoutPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 551, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Logout", logoutPanel1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -85,5 +101,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private bookapp.bookapp.panel.KasirPanel kasirPanel2;
     private bookapp.bookapp.panel.LaporanPanel laporanPanel2;
+    private bookapp.bookapp.panel.LogoutPanel logoutPanel1;
     // End of variables declaration//GEN-END:variables
 }

@@ -327,6 +327,7 @@ public class KasirPanel extends javax.swing.JPanel {
                 Log log = new Log(
                         0,
                         currentUser.getIdUser(),
+                        currentUser.getUsername(),
                         idBuku,
                         now,
                         "Transaksi #" + transaksi.getIdTransaksi() + " - Terjual " + jumlah + "x " + item.getBuku().getJudul(),

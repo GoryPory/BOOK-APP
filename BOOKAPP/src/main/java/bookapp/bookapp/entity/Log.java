@@ -23,6 +23,7 @@ public class Log {
     private int idLog;
     private int idUser;
     private int idBuku;
+    private String username;
     private LocalDateTime datetime;
     private String desc;
     private typeAksi type;
@@ -30,9 +31,11 @@ public class Log {
     public Log() {
     }
 
-    public Log(int idLog, int idUser, int idBuku, LocalDateTime datetime, String desc, typeAksi type) {
+    public Log(int idLog, int idUser, String username, int idBuku,
+            LocalDateTime datetime, String desc, typeAksi type) {
         this.idLog = idLog;
         this.idUser = idUser;
+        this.username = username;
         this.idBuku = idBuku;
         this.datetime = datetime;
         this.desc = desc;
@@ -59,6 +62,14 @@ public class Log {
         return idBuku;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
     public void setIdBuku(int idBuku) {
         this.idBuku = idBuku;
     }

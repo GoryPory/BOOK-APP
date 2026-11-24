@@ -23,7 +23,7 @@ import java.util.Date;
 
 /**
  *
- * @author rog
+ * @author gori
  */
 public class LogPanel extends javax.swing.JPanel {
 
@@ -49,6 +49,9 @@ public class LogPanel extends javax.swing.JPanel {
             }
         });
 
+        // Tambah opsi "Transaksi Log" (ditaruh di sini supaya tidak ketimpa kode generated NetBeans)
+        filterBox.setModel(new javax.swing.DefaultComboBoxModel<>(
+                new String[]{"All Log", "Create Log", "Update Log", "Delete Log", "Transaksi Log"}));
         dateDari.setDateFormatString("dd-MM-yyyy");
         dateSampai.setDateFormatString("dd-MM-yyyy");
 
@@ -98,7 +101,6 @@ public class LogPanel extends javax.swing.JPanel {
             List<Log> logs = logModel.findByFilter(typeFilter, dari, sampai);
 
             Map<Integer, String> bukuMap = buildBukuMap();
-            Map<Integer, String> userMap = buildUserMap();
 
             DefaultTableModel model = (DefaultTableModel) logTable.getModel();
             model.setRowCount(0);
@@ -108,8 +110,17 @@ public class LogPanel extends javax.swing.JPanel {
                 String tanggal = log.getDatetime() != null
                         ? log.getDatetime().format(dateFormatter)
                         : "-";
-                String judulBuku = bukuMap.getOrDefault(log.getIdBuku(), "Buku #" + log.getIdBuku());
-                String namaPerubah = userMap.getOrDefault(log.getIdUser(), "User #" + log.getIdUser());
+
+                // idBuku == 0 berarti id_buku NULL di DB (buku sudah dihapus)
+                String judulBuku = log.getIdBuku() == 0
+                        ? "(buku dihapus)"
+                        : bukuMap.getOrDefault(log.getIdBuku(), "Buku #" + log.getIdBuku());
+
+                // username disimpan langsung di tabel log, jadi tetap terbaca walau akun sudah dihapus
+                String namaPerubah = (log.getUsername() != null && !log.getUsername().isEmpty())
+                        ? log.getUsername()
+                        : "-";
+
                 String tipe = log.getType() != null ? log.getType().name() : "-";
 
                 model.addRow(new Object[]{
@@ -160,13 +171,13 @@ public class LogPanel extends javax.swing.JPanel {
         return map;
     }
 
-    private Map<Integer, String> buildUserMap() {
-        Map<Integer, String> map = new HashMap<>();
-        for (Users u : usersModel.readAll()) {
-            map.put(u.getIdUser(), u.getUsername());
-        }
-        return map;
-    }
+//    private Map<Integer, String> buildUserMap() {
+//        Map<Integer, String> map = new HashMap<>();
+//        for (Users u : usersModel.readAll()) {
+//            map.put(u.getIdUser(), u.getUsername());
+//        }
+//        return map;
+//    }
     
     /**
      * This method is called from within the constructor to initialize the form.

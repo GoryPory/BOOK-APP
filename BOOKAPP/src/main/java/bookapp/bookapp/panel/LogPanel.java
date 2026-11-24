@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 /**
  *
@@ -28,10 +31,8 @@ public class LogPanel extends javax.swing.JPanel {
     private final BukuModel bukuModel = new BukuModel();
     private final UsersModel usersModel = new UsersModel();
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-    
-    /**
-     * Creates new form LaporanPanel
-     */
+    private boolean isUpdatingDates = false;
+
     public LogPanel() {
         initComponents();
         setupPanel();
@@ -48,10 +49,40 @@ public class LogPanel extends javax.swing.JPanel {
             }
         });
 
+        dateDari.setDateFormatString("dd-MM-yyyy");
+        dateSampai.setDateFormatString("dd-MM-yyyy");
+
+        dateDari.addPropertyChangeListener("date", evt -> onDateChanged(true));
+        dateSampai.addPropertyChangeListener("date", evt -> onDateChanged(false));
+
         // Skip query DB saat membuka form di NetBeans GUI Designer
         if (!Beans.isDesignTime()) {
             refreshData();
         }
+    }
+
+    private void onDateChanged(boolean dariChanged) {
+        if (isUpdatingDates || Beans.isDesignTime()) {
+            return;
+        }
+
+        LocalDate dari = toLocalDate(dateDari.getDate());
+        LocalDate sampai = toLocalDate(dateSampai.getDate());
+
+        if (dari != null && sampai != null && dari.isAfter(sampai)) {
+            isUpdatingDates = true;
+            try {
+                if (dariChanged) {
+                    dateSampai.setDate(dateDari.getDate());
+                } else {
+                    dateDari.setDate(dateSampai.getDate());
+                }
+            } finally {
+                isUpdatingDates = false;
+            }
+        }
+
+        refreshData();
     }
 
     public void refreshData() {
@@ -60,8 +91,11 @@ public class LogPanel extends javax.swing.JPanel {
         }
 
         try {
-            String selectedFilter = (String) filterBox.getSelectedItem();
-            List<Log> logs = fetchLogsByFilter(selectedFilter);
+            Log.typeAksi typeFilter = parseFilterType((String) filterBox.getSelectedItem());
+            LocalDate dari = toLocalDate(dateDari.getDate());
+            LocalDate sampai = toLocalDate(dateSampai.getDate());
+
+            List<Log> logs = logModel.findByFilter(typeFilter, dari, sampai);
 
             Map<Integer, String> bukuMap = buildBukuMap();
             Map<Integer, String> userMap = buildUserMap();
@@ -97,18 +131,25 @@ public class LogPanel extends javax.swing.JPanel {
         }
     }
 
-    private List<Log> fetchLogsByFilter(String selectedFilter) {
+    private Log.typeAksi parseFilterType(String selectedFilter) {
         if (selectedFilter == null || selectedFilter.equals("All Log")) {
-            return logModel.readAll();
+            return null;
         }
 
         return switch (selectedFilter) {
-            case "Create Log" -> logModel.readByType(Log.typeAksi.CREATE);
-            case "Update Log" -> logModel.readByType(Log.typeAksi.UPDATE);
-            case "Delete Log" -> logModel.readByType(Log.typeAksi.DELETE);
-            case "Transaksi Log" -> logModel.readByType(Log.typeAksi.TRANSAKSI);
-            default -> logModel.readAll();
+            case "Create Log" -> Log.typeAksi.CREATE;
+            case "Update Log" -> Log.typeAksi.UPDATE;
+            case "Delete Log" -> Log.typeAksi.DELETE;
+            case "Transaksi Log" -> Log.typeAksi.TRANSAKSI;
+            default -> null;
         };
+    }
+
+    private LocalDate toLocalDate(Date date) {
+        if (date == null) {
+            return null;
+        }
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     private Map<Integer, String> buildBukuMap() {
@@ -140,6 +181,11 @@ public class LogPanel extends javax.swing.JPanel {
         logTable = new javax.swing.JTable();
         refresh = new javax.swing.JButton();
         filterBox = new javax.swing.JComboBox<>();
+        jLabel2 = new javax.swing.JLabel();
+        dateDari = new com.toedter.calendar.JDateChooser();
+        jLabel3 = new javax.swing.JLabel();
+        dateSampai = new com.toedter.calendar.JDateChooser();
+        btnReset = new javax.swing.JButton();
 
         logTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -160,16 +206,35 @@ public class LogPanel extends javax.swing.JPanel {
         filterBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Log", "Create Log", "Update Log", "Delete Log" }));
         filterBox.addActionListener(this::filterBoxActionPerformed);
 
+        jLabel2.setText("Dari");
+
+        jLabel3.setText("Sampai");
+
+        btnReset.setText("Reset");
+        btnReset.addActionListener(this::btnResetActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filterBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(refresh)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(filterBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(refresh))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(dateDari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(dateSampai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnReset)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -180,7 +245,14 @@ public class LogPanel extends javax.swing.JPanel {
                     .addComponent(refresh)
                     .addComponent(filterBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(dateSampai, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(dateDari, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnReset, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -189,12 +261,30 @@ public class LogPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_refreshActionPerformed
 
     private void filterBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterBoxActionPerformed
-        refreshData();
+        if (!isUpdatingDates) {
+            refreshData();
+        }
     }//GEN-LAST:event_filterBoxActionPerformed
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        isUpdatingDates = true;
+        try {
+            dateDari.setDate(null);
+            dateSampai.setDate(null);
+        } finally {
+            isUpdatingDates = false;
+        }
+        refreshData();
+    }//GEN-LAST:event_btnResetActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnReset;
+    private com.toedter.calendar.JDateChooser dateDari;
+    private com.toedter.calendar.JDateChooser dateSampai;
     private javax.swing.JComboBox<String> filterBox;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane;
     private javax.swing.JTable logTable;
     private javax.swing.JButton refresh;

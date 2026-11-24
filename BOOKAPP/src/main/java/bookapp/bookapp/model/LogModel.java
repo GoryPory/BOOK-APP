@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
 
 public class LogModel implements BaseModel<Log, Integer> {
 
@@ -95,6 +96,48 @@ public class LogModel implements BaseModel<Log, Integer> {
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, type.name());
 
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error memfilter log inventori: " + e.getMessage());
+        }
+        return list;
+    }
+    
+    public List<Log> findByFilter(Log.typeAksi type, LocalDate dari, LocalDate sampai) {
+        List<Log> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "SELECT id_log, id_user, id_buku, datetime, `desc`, type FROM log_inventori WHERE 1=1"
+        );
+        List<Object> params = new ArrayList<>();
+
+        if (type != null) {
+            sql.append(" AND type = ?");
+            params.add(type.name());
+        }
+        if (dari != null) {
+            sql.append(" AND datetime >= ?");
+            params.add(Timestamp.valueOf(dari.atStartOfDay()));
+        }
+        if (sampai != null) {
+            sql.append(" AND datetime < ?");
+            params.add(Timestamp.valueOf(sampai.plusDays(1).atStartOfDay()));
+        }
+        sql.append(" ORDER BY datetime DESC");
+
+        Connection conn = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof String s) {
+                    ps.setString(i + 1, s);
+                } else if (param instanceof Timestamp ts) {
+                    ps.setTimestamp(i + 1, ts);
+                }
+            }
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapRow(rs));

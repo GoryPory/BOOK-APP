@@ -216,6 +216,25 @@ public class KasirPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        if (cartRepo.getCart().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Keranjang sudah kosong.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Yakin ingin mengosongkan seluruh isi keranjang?",
+                "Konfirmasi Reset",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            resetCart();
+        }
+    }//GEN-LAST:event_btnResetActionPerformed
+
+    private void btnBayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBayarActionPerformed
         List<CartItem> items = new ArrayList<>(cartRepo.getCart());
         if (items.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Keranjang masih kosong. Tambahkan buku terlebih dahulu.", "Keranjang Kosong", JOptionPane.WARNING_MESSAGE);
@@ -254,7 +273,7 @@ public class KasirPanel extends javax.swing.JPanel {
             return;
         }
 
-        // Validate live stock in DB for every cart item before creating any record
+        // Validasi stok terbaru di database sebelum menyimpan transaksi
         for (CartItem item : items) {
             Buku freshBuku = bukuModel.findById(item.getBuku().getIdBuku());
             if (freshBuku == null) {
@@ -281,11 +300,11 @@ public class KasirPanel extends javax.swing.JPanel {
         try {
             LocalDateTime now = LocalDateTime.now();
 
-            // 1. Save Transaksi header (auto-fills generated idTransaksi)
+            // 1. Simpan header transaksi
             Transaksi transaksi = new Transaksi(0, currentUser.getIdUser(), totalBelanja, tunai, now);
             transaksiModel.create(transaksi);
 
-            // 2. Save each DetailTransaksi, deduct stock, and record TRANSAKSI log
+            // 2. Simpan detail transaksi, kurangi stok, dan catat log TRANSAKSI
             for (CartItem item : items) {
                 int idBuku = item.getBuku().getIdBuku();
                 int jumlah = item.getJmlh();
@@ -318,7 +337,7 @@ public class KasirPanel extends javax.swing.JPanel {
 
             double kembalian = tunai - totalBelanja;
 
-            // 3. Reset cart and refresh UI
+            // 3. Reset keranjang dan refresh UI
             resetCart();
 
             if (onTransactionSuccess != null) {
@@ -342,14 +361,32 @@ public class KasirPanel extends javax.swing.JPanel {
                     JOptionPane.ERROR_MESSAGE
             );
         }
-    }//GEN-LAST:event_btnResetActionPerformed
-
-    private void btnBayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBayarActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_btnBayarActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+        int selectedRow = keranjangTable.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Pilih item di keranjang yang ingin dihapus terlebih dahulu.",
+                    "Peringatan",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        CartItem item = cartRepo.getCart().get(selectedRow);
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Hapus \"" + item.getBuku().getJudul() + "\" (" + item.getJmlh() + "x) dari keranjang?",
+                "Konfirmasi Hapus",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            cartRepo.removeItemAt(selectedRow);
+            refreshCart();
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
 

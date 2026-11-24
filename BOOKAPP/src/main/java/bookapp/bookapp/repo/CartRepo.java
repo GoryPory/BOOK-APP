@@ -57,6 +57,12 @@ public class CartRepo {
         cart.add(new CartItem(buku, jumlah));
     }
 
+    public void removeItemAt(int index) {
+        if (index >= 0 && index < cart.size()) {
+            cart.remove(index);
+        }
+    }
+    
     public void clear() {
         cart.clear();
     }

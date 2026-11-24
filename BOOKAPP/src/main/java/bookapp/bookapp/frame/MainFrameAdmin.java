@@ -32,6 +32,8 @@ public class MainFrameAdmin extends javax.swing.JFrame {
                 bukuPanel1.refreshTable();
             } else if (selected == logPanel1) {
                 logPanel1.refreshData();
+            } else if (selected == laporanPanel2) {
+                laporanPanel2.refresh();
             }
         });
     }

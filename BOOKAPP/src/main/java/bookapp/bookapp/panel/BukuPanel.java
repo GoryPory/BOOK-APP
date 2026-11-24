@@ -45,6 +45,7 @@ public class BukuPanel extends javax.swing.JPanel {
     btnCreate.setVisible(admin);
     btnUpdate.setVisible(admin);
     btnDelete.setVisible(admin);
+    btnTambah.setVisible(!admin);
     } 
     
     private void setupPanel() {
@@ -226,7 +227,7 @@ public class BukuPanel extends javax.swing.JPanel {
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnCreate = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnTambah = new javax.swing.JButton();
 
         bukuTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -279,8 +280,8 @@ public class BukuPanel extends javax.swing.JPanel {
         btnCreate.setText("CREATE");
         btnCreate.addActionListener(this::btnCreateActionPerformed);
 
-        jButton1.setText("Tambah ke Keranjang");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
+        btnTambah.setText("Tambah ke Keranjang");
+        btnTambah.addActionListener(this::btnTambahActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -290,7 +291,7 @@ public class BukuPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnTambah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(txtSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -333,7 +334,7 @@ public class BukuPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(btnTambah)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -376,7 +377,7 @@ public class BukuPanel extends javax.swing.JPanel {
         performSearch();
     }//GEN-LAST:event_txtSearchActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         if (selectedBuku == null) {
             JOptionPane.showMessageDialog(this, "Pilih buku dari tabel terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
@@ -456,7 +457,7 @@ public class BukuPanel extends javax.swing.JPanel {
                 "Berhasil",
                 JOptionPane.INFORMATION_MESSAGE
         );
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
         Buku bukuBaru = buildBukuFromForm(0);
@@ -530,9 +531,9 @@ public class BukuPanel extends javax.swing.JPanel {
     private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnDelete;
     private javax.swing.JToggleButton btnSearch;
+    private javax.swing.JButton btnTambah;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JTable bukuTable;
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane;
     private javax.swing.JLabel labelHarga;
     private javax.swing.JLabel labelJudul;

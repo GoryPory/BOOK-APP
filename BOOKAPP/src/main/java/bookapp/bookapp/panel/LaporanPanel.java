@@ -14,6 +14,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
+import java.beans.Beans;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -24,8 +30,25 @@ public class LaporanPanel extends javax.swing.JPanel {
     /**
      * Creates new form LaporanPanel
      */
+    private final TransaksiModel transaksiModel = new TransaksiModel();
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    private boolean isUpdatingDates = false;
+
     public LaporanPanel() {
         initComponents();
+        setupPanel();
+    }
+
+    private void setupPanel() {
+        dateDari.setDateFormatString("dd-MM-yyyy");
+        dateSampai.setDateFormatString("dd-MM-yyyy");
+
+        dateDari.addPropertyChangeListener("date", evt -> onDateChanged(true));
+        dateSampai.addPropertyChangeListener("date", evt -> onDateChanged(false));
+
+        if (!Beans.isDesignTime()) {
+            refresh();
+        }
     }
 
     /**
@@ -41,6 +64,11 @@ public class LaporanPanel extends javax.swing.JPanel {
         laporanTable = new javax.swing.JTable();
         refresh = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        dateDari = new com.toedter.calendar.JDateChooser();
+        jLabel3 = new javax.swing.JLabel();
+        dateSampai = new com.toedter.calendar.JDateChooser();
+        btnReset = new javax.swing.JButton();
 
         laporanTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -73,17 +101,35 @@ public class LaporanPanel extends javax.swing.JPanel {
 
         jLabel1.setText("Double-click sebuah barisan untuk melihat detail transaksi");
 
+        jLabel2.setText("Dari");
+
+        jLabel3.setText("Sampai");
+
+        btnReset.setText("Reset");
+        btnReset.addActionListener(this::btnResetActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(refresh)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(dateDari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(dateSampai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnReset)
+                    .addComponent(refresh))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -92,8 +138,15 @@ public class LaporanPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(refresh)
                     .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))
+                .addGap(1, 1, 1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(dateSampai, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnReset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(dateDari, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(8, 8, 8)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 392, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -115,6 +168,17 @@ public class LaporanPanel extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_TableClicked
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        isUpdatingDates = true;
+        try {
+            dateDari.setDate(null);
+            dateSampai.setDate(null);
+        } finally {
+            isUpdatingDates = false;
+        }
+        refresh();
+    }//GEN-LAST:event_btnResetActionPerformed
 
     private void showTransactionItemsPopup(Object transactionId) {
         // 1. Define columns for the itemized popup table
@@ -160,19 +224,80 @@ public class LaporanPanel extends javax.swing.JPanel {
         );
     }
     
+    private void onDateChanged(boolean dariChanged) {
+        if (isUpdatingDates || Beans.isDesignTime()) {
+            return;
+        }
+
+        LocalDate dari = toLocalDate(dateDari.getDate());
+        LocalDate sampai = toLocalDate(dateSampai.getDate());
+
+        if (dari != null && sampai != null && dari.isAfter(sampai)) {
+            isUpdatingDates = true;
+            try {
+                if (dariChanged) {
+                    dateSampai.setDate(dateDari.getDate());
+                } else {
+                    dateDari.setDate(dateSampai.getDate());
+                }
+            } finally {
+                isUpdatingDates = false;
+            }
+        }
+
+        applyFilter();
+    }
+
     public void refresh() {
+        applyFilter();
+    }
+
+    private void applyFilter() {
+        if (Beans.isDesignTime()) {
+            return;
+        }
+
+        LocalDate dari = toLocalDate(dateDari.getDate());
+        LocalDate sampai = toLocalDate(dateSampai.getDate());
+
+        List<Transaksi> list = (dari == null && sampai == null)
+                ? transaksiModel.readAll()
+                : transaksiModel.findByDateRange(dari, sampai);
+
+        populateTable(list);
+    }
+
+    private LocalDate toLocalDate(Date date) {
+        if (date == null) {
+            return null;
+        }
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    private void populateTable(List<Transaksi> list) {
         DefaultTableModel model = (DefaultTableModel) laporanTable.getModel();
-        model.setRowCount(0); // Clear existing rows
-        TransaksiModel tm = new TransaksiModel();
-        
-    // Re-read data from your source / Transaction Panel and add rows back
-        for (Transaksi t : tm.readAll()) {
-            model.addRow(new Object[]{ t.getIdTransaksi(), t.getDatetime(), t.getTotalBelanja(), t.getUangPembayaran()});
+        model.setRowCount(0);
+
+        for (Transaksi t : list) {
+            String tanggal = t.getDatetime() != null
+                    ? t.getDatetime().format(dateTimeFormatter)
+                    : "-";
+            model.addRow(new Object[]{
+                t.getIdTransaksi(),
+                tanggal,
+                t.getTotalBelanja(),
+                t.getUangPembayaran()
+            });
         }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnReset;
+    private com.toedter.calendar.JDateChooser dateDari;
+    private com.toedter.calendar.JDateChooser dateSampai;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable laporanTable;
     private javax.swing.JButton refresh;

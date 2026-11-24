@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
 
 public class TransaksiModel implements BaseModel<Transaksi, Integer> {
 
@@ -85,6 +86,39 @@ public class TransaksiModel implements BaseModel<Transaksi, Integer> {
         return list;
     }
 
+    public List<Transaksi> findByDateRange(LocalDate dari, LocalDate sampai) {
+        List<Transaksi> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+                "SELECT id_transaksi, datetime, total_belanja, tunai, id_user FROM transaksi WHERE 1=1"
+        );
+        List<Timestamp> params = new ArrayList<>();
+
+        if (dari != null) {
+            sql.append(" AND datetime >= ?");
+            params.add(Timestamp.valueOf(dari.atStartOfDay()));
+        }
+        if (sampai != null) {
+            sql.append(" AND datetime < ?");
+            params.add(Timestamp.valueOf(sampai.plusDays(1).atStartOfDay()));
+        }
+        sql.append(" ORDER BY datetime DESC");
+
+        Connection conn = DatabaseConnection.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setTimestamp(i + 1, params.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error memfilter transaksi berdasarkan tanggal: " + e.getMessage());
+        }
+        return list;
+    }
+    
     @Override
     public void delete(Integer id) {
         String sql = "DELETE FROM transaksi WHERE id_transaksi = ?";

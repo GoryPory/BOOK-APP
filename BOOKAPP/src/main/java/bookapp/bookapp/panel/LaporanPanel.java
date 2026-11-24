@@ -4,6 +4,17 @@
  */
 package bookapp.bookapp.panel;
 
+import bookapp.bookapp.entity.DetailTransaksi;
+import bookapp.bookapp.entity.Transaksi;
+import bookapp.bookapp.model.BukuModel;
+import bookapp.bookapp.model.DetailTransaksiModel;
+import bookapp.bookapp.model.TransaksiModel;
+import java.awt.Dimension;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author rog
@@ -29,30 +40,48 @@ public class LaporanPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         laporanTable = new javax.swing.JTable();
         refresh = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         laporanTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "No", "Tanggal", "Total Belanja", "Tunai", "Detail"
+                "No", "Tanggal", "Total Belanja", "Tunai"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        laporanTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TableClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(laporanTable);
 
         refresh.setText("Refresh");
         refresh.addActionListener(this::refreshActionPerformed);
 
+        jLabel1.setText("Double-click sebuah barisan untuk melihat detail transaksi");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(refresh)
                 .addContainerGap())
         );
@@ -60,18 +89,90 @@ public class LaporanPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(refresh)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(refresh)
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
-        // TODO add your handling code here:
+        refresh();
     }//GEN-LAST:event_refreshActionPerformed
 
+    private void TableClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableClicked
+        if (evt.getClickCount() == 2) {
+            int viewRow = laporanTable.getSelectedRow();
+            if (viewRow != -1) {
+                // convertRowIndexToModel ensures you get the right row even if the user sorted the table
+                int modelRow = laporanTable.convertRowIndexToModel(viewRow);
+
+                // Assuming column 0 holds the Transaction ID
+                Object transactionId = laporanTable.getModel().getValueAt(modelRow, 0);
+
+                showTransactionItemsPopup(transactionId);
+            }
+        }
+    }//GEN-LAST:event_TableClicked
+
+    private void showTransactionItemsPopup(Object transactionId) {
+        // 1. Define columns for the itemized popup table
+        String[] columns = {"Nama Barang", "Harga", "Jumlah", "Subtotal"};
+
+        // Make the popup table read-only
+        DefaultTableModel itemModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        // 2. Fetch the items belonging to transactionId and populate rows
+        // Replace this loop with your actual data lookup (e.g., from your list or database)
+        
+        DetailTransaksiModel dtm = new DetailTransaksiModel();
+        BukuModel bm = new BukuModel();
+        for (DetailTransaksi item : dtm.searchByTransaksi((int)transactionId)) {
+            var buku = bm.findById(item.getIdBuku());
+            double subtotal = buku.getHarga() * item.getJumlah();
+            itemModel.addRow(new Object[]{
+                buku.getJudul(),
+                String.format("%.2f", new Object[]{buku.getHarga()}),
+                item.getJumlah(),
+                String.format("%.2f", subtotal)
+            });
+        }
+
+        // 3. Create the JTable and wrap it in a JScrollPane (required so column headers appear)
+        JTable itemTable = new JTable(itemModel);
+        itemTable.setFillsViewportHeight(true);
+
+        JScrollPane scrollPane = new JScrollPane(itemTable);
+        scrollPane.setPreferredSize(new Dimension(450, 220)); // Control popup table size
+
+        // 4. Display the table inside a standard modal popup
+        JOptionPane.showMessageDialog(
+            this, 
+            scrollPane, 
+            "Items for Transaction #" + transactionId, 
+            JOptionPane.PLAIN_MESSAGE
+        );
+    }
+    
+    public void refresh() {
+        DefaultTableModel model = (DefaultTableModel) laporanTable.getModel();
+        model.setRowCount(0); // Clear existing rows
+        TransaksiModel tm = new TransaksiModel();
+        
+    // Re-read data from your source / Transaction Panel and add rows back
+        for (Transaksi t : tm.readAll()) {
+            model.addRow(new Object[]{ t.getIdTransaksi(), t.getDatetime(), t.getTotalBelanja(), t.getUangPembayaran()});
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable laporanTable;
     private javax.swing.JButton refresh;

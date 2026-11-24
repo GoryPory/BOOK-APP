@@ -10,15 +10,23 @@ package bookapp.bookapp.model;
  */
 import bookapp.bookapp.config.DatabaseConnection;
 import bookapp.bookapp.entity.Buku;
+import bookapp.bookapp.entity.Log;
+import bookapp.bookapp.entity.Users;
+import bookapp.bookapp.repo.AuthRepo;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class BukuModel implements BaseModel<Buku, Integer> {
+
+    private final LogModel logModel = new LogModel();
 
     @Override
     public void create(Buku item) {
@@ -38,6 +46,14 @@ public class BukuModel implements BaseModel<Buku, Integer> {
                     item.setIdBuku(rs.getInt(1));
                 }
             }
+
+            catatLog(
+                    item.getIdBuku(),
+                    Log.typeAksi.CREATE,
+                    "Menambah buku \"" + item.getJudul() + "\" (" + item.getNamaPenulis()
+                    + ", harga " + formatPlainNumber(item.getHarga())
+                    + ", stok " + item.getStock() + ")"
+            );
         } catch (SQLException e) {
             throw new RuntimeException("Gagal menambahkan buku: " + e.getMessage(), e);
         }
@@ -102,6 +118,7 @@ public class BukuModel implements BaseModel<Buku, Integer> {
 
     @Override
     public void update(Buku item) {
+        Buku lama = findById(item.getIdBuku());
         String sql = "UPDATE buku SET judul = ?, penulis = ?, harga = ?, stok = ?, tahun_terbit = ? WHERE id_buku = ?";
         Connection conn = DatabaseConnection.getConnection();
 
@@ -112,7 +129,19 @@ public class BukuModel implements BaseModel<Buku, Integer> {
             ps.setInt(4, item.getStock());
             ps.setInt(5, item.getTahunTerbit());
             ps.setInt(6, item.getIdBuku());
-            ps.executeUpdate();
+            int affected = ps.executeUpdate();
+
+            if (affected > 0) {
+                String deskripsi;
+                if (lama != null) {
+                    String diff = buildDiff(lama, item);
+                    deskripsi = "Mengubah buku \"" + lama.getJudul() + "\": "
+                            + (diff.isEmpty() ? "tidak ada perubahan" : diff);
+                } else {
+                    deskripsi = "Mengubah buku #" + item.getIdBuku() + " \"" + item.getJudul() + "\"";
+                }
+                catatLog(item.getIdBuku(), Log.typeAksi.UPDATE, deskripsi);
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Gagal mengubah buku: " + e.getMessage(), e);
         }
@@ -134,15 +163,69 @@ public class BukuModel implements BaseModel<Buku, Integer> {
 
     @Override
     public void delete(Integer id) {
+        Buku lama = findById(id);
         String sql = "DELETE FROM buku WHERE id_buku = ?";
         Connection conn = DatabaseConnection.getConnection();
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
-            ps.executeUpdate();
+            int affected = ps.executeUpdate();
+
+            if (affected > 0) {
+                String deskripsi = (lama != null)
+                        ? "Menghapus buku #" + lama.getIdBuku() + " \"" + lama.getJudul()
+                          + "\" (" + lama.getNamaPenulis() + ")"
+                        : "Menghapus buku #" + id;
+                // idBuku = 0 agar disimpan sebagai NULL (menghindari error FK karena baris buku sudah dihapus)
+                catatLog(0, Log.typeAksi.DELETE, deskripsi);
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Gagal menghapus buku: " + e.getMessage(), e);
         }
+    }
+
+    private void catatLog(int idBuku, Log.typeAksi type, String desc) {
+        Users user = AuthRepo.getInstance().getCurrentUser();
+        if (user == null) {
+            return;
+        }
+        try {
+            logModel.create(new Log(
+                    0,
+                    user.getIdUser(),
+                    user.getUsername(),
+                    idBuku,
+                    LocalDateTime.now(),
+                    desc,
+                    type
+            ));
+        } catch (RuntimeException e) {
+            System.err.println("Gagal mencatat log: " + e.getMessage());
+        }
+    }
+
+    private String buildDiff(Buku lama, Buku baru) {
+        StringBuilder sb = new StringBuilder();
+        if (!Objects.equals(lama.getJudul(), baru.getJudul())) {
+            sb.append("judul: \"").append(lama.getJudul()).append("\" -> \"").append(baru.getJudul()).append("\"; ");
+        }
+        if (!Objects.equals(lama.getNamaPenulis(), baru.getNamaPenulis())) {
+            sb.append("penulis: ").append(lama.getNamaPenulis()).append(" -> ").append(baru.getNamaPenulis()).append("; ");
+        }
+        if (Double.compare(lama.getHarga(), baru.getHarga()) != 0) {
+            sb.append("harga: ").append(formatPlainNumber(lama.getHarga())).append(" -> ").append(formatPlainNumber(baru.getHarga())).append("; ");
+        }
+        if (lama.getStock() != baru.getStock()) {
+            sb.append("stok: ").append(lama.getStock()).append(" -> ").append(baru.getStock()).append("; ");
+        }
+        if (lama.getTahunTerbit() != baru.getTahunTerbit()) {
+            sb.append("tahun: ").append(lama.getTahunTerbit()).append(" -> ").append(baru.getTahunTerbit()).append("; ");
+        }
+        return sb.toString();
+    }
+
+    private String formatPlainNumber(double value) {
+        return BigDecimal.valueOf(value).stripTrailingZeros().toPlainString();
     }
 
     private Buku mapRow(ResultSet rs) throws SQLException {

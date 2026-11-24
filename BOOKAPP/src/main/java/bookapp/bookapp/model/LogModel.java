@@ -16,10 +16,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.time.LocalDate;
 
 public class LogModel implements BaseModel<Log, Integer> {
 
@@ -40,6 +40,7 @@ public class LogModel implements BaseModel<Log, Integer> {
             ps.setTimestamp(4, Timestamp.valueOf(waktu));
             ps.setString(5, item.getDesc());
             ps.setString(6, item.getType().name());
+            ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -71,7 +72,7 @@ public class LogModel implements BaseModel<Log, Integer> {
     @Override
     public List<Log> search(String keyword) {
         List<Log> list = new ArrayList<>();
-        String sql = "SELECT id_log, id_user, id_buku, datetime, `desc`, type FROM log_inventori "
+        String sql = "SELECT id_log, id_user, username, id_buku, datetime, `desc`, type FROM log_inventori "
                 + "WHERE `desc` LIKE ? OR type LIKE ? ORDER BY datetime DESC";
         Connection conn = DatabaseConnection.getConnection();
         String pattern = "%" + keyword + "%";
@@ -93,7 +94,7 @@ public class LogModel implements BaseModel<Log, Integer> {
 
     public List<Log> readByType(Log.typeAksi type) {
         List<Log> list = new ArrayList<>();
-        String sql = "SELECT id_log, id_user, id_buku, datetime, `desc`, type "
+        String sql = "SELECT id_log, id_user, username, id_buku, datetime, `desc`, type "
                 + "FROM log_inventori WHERE type = ? ORDER BY datetime DESC";
         Connection conn = DatabaseConnection.getConnection();
 
@@ -110,11 +111,11 @@ public class LogModel implements BaseModel<Log, Integer> {
         }
         return list;
     }
-    
+
     public List<Log> findByFilter(Log.typeAksi type, LocalDate dari, LocalDate sampai) {
         List<Log> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "SELECT id_log, id_user, id_buku, datetime, `desc`, type FROM log_inventori WHERE 1=1"
+                "SELECT id_log, id_user, username, id_buku, datetime, `desc`, type FROM log_inventori WHERE 1=1"
         );
         List<Object> params = new ArrayList<>();
 
@@ -152,7 +153,7 @@ public class LogModel implements BaseModel<Log, Integer> {
         }
         return list;
     }
-    
+
     private Log mapRow(ResultSet rs) throws SQLException {
         Timestamp ts = rs.getTimestamp("datetime");
         return new Log(

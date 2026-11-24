@@ -25,17 +25,21 @@ public class LogModel implements BaseModel<Log, Integer> {
 
     @Override
     public void create(Log item) {
-        String sql = "INSERT INTO log_inventori (id_user, id_buku, datetime, `desc`, type) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO log_inventori (id_user, username, id_buku, datetime, `desc`, type) VALUES (?, ?, ?, ?, ?, ?)";
         Connection conn = DatabaseConnection.getConnection();
         LocalDateTime waktu = item.getDatetime() != null ? item.getDatetime() : LocalDateTime.now();
 
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, item.getIdUser());
-            ps.setInt(2, item.getIdBuku());
-            ps.setTimestamp(3, Timestamp.valueOf(waktu));
-            ps.setString(4, item.getDesc());
-            ps.setString(5, item.getType().name());
-            ps.executeUpdate();
+            ps.setString(2, item.getUsername());
+            if (item.getIdBuku() > 0) {
+                ps.setInt(3, item.getIdBuku());
+            } else {
+                ps.setNull(3, java.sql.Types.INTEGER);
+            }
+            ps.setTimestamp(4, Timestamp.valueOf(waktu));
+            ps.setString(5, item.getDesc());
+            ps.setString(6, item.getType().name());
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -50,7 +54,7 @@ public class LogModel implements BaseModel<Log, Integer> {
     @Override
     public List<Log> readAll() {
         List<Log> list = new ArrayList<>();
-        String sql = "SELECT id_log, id_user, id_buku, datetime, `desc`, type FROM log_inventori ORDER BY datetime DESC";
+        String sql = "SELECT id_log, id_user, username, id_buku, datetime, `desc`, type FROM log_inventori ORDER BY datetime DESC";
         Connection conn = DatabaseConnection.getConnection();
 
         try (PreparedStatement ps = conn.prepareStatement(sql);
@@ -154,6 +158,7 @@ public class LogModel implements BaseModel<Log, Integer> {
         return new Log(
                 rs.getInt("id_log"),
                 rs.getInt("id_user"),
+                rs.getString("username"),
                 rs.getInt("id_buku"),
                 ts != null ? ts.toLocalDateTime() : null,
                 rs.getString("desc"),

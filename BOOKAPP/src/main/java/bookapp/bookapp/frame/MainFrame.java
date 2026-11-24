@@ -46,6 +46,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         bukuPanel1 = new bookapp.bookapp.panel.BukuPanel();
         kasirPanel2 = new bookapp.bookapp.panel.KasirPanel();
+        logoutPanel1 = new bookapp.bookapp.panel.LogoutPanel();
         laporanPanel = new bookapp.bookapp.panel.LaporanPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -53,6 +54,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTabbedPane1.addChangeListener(this::OnStateChanged);
         jTabbedPane1.addTab("Buku", bukuPanel1);
         jTabbedPane1.addTab("Kasir", kasirPanel2);
+        jTabbedPane1.addTab("Logout", logoutPanel1);
         jTabbedPane1.addTab("Laporan", laporanPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -112,6 +114,7 @@ public class MainFrame extends javax.swing.JFrame {
     private bookapp.bookapp.panel.BukuPanel bukuPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private bookapp.bookapp.panel.KasirPanel kasirPanel2;
+    private bookapp.bookapp.panel.LogoutPanel logoutPanel1;
     private bookapp.bookapp.panel.LaporanPanel laporanPanel;
     // End of variables declaration//GEN-END:variables
 }

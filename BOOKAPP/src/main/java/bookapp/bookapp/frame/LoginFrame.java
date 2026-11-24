@@ -52,6 +52,7 @@ public class LoginFrame extends javax.swing.JFrame {
         PasswordLabel.setText("Password");
 
         PasswordField.setText("jPasswordField1");
+        PasswordField.addActionListener(this::PasswordFieldActionPerformed);
 
         loginBtn.setText("Login");
         loginBtn.addActionListener(this::loginBtnActionPerformed);
@@ -121,6 +122,10 @@ public class LoginFrame extends javax.swing.JFrame {
     dispose(); 
 
     }//GEN-LAST:event_loginBtnActionPerformed
+
+    private void PasswordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PasswordFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_PasswordFieldActionPerformed
 
     /**
      * @param args the command line arguments

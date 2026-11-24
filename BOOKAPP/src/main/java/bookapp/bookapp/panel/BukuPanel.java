@@ -13,6 +13,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import bookapp.bookapp.repo.CartRepo;
 import bookapp.bookapp.repo.AuthRepo;
+import bookapp.bookapp.entity.Log;
+import bookapp.bookapp.entity.Users;
+import bookapp.bookapp.model.LogModel;
+import java.time.LocalDateTime;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -31,7 +35,8 @@ public class BukuPanel extends javax.swing.JPanel {
     private List<Buku> currentList = new ArrayList<>();
     private Buku selectedBuku = null;
     private Runnable onCartUpdated;
-
+    private final LogModel logModel = new LogModel();
+    
     /**
      * Creates new form BukuPanel
      */
@@ -62,6 +67,33 @@ public class BukuPanel extends javax.swing.JPanel {
         if (!Beans.isDesignTime()) {
             refreshTable();
         }
+    }
+
+
+    private void catatLog(int idBuku, Log.typeAksi type, String desc) {
+        Users user = AuthRepo.getInstance().getCurrentUser();
+        if (user == null) return;
+        try {
+            logModel.create(new Log(0, user.getIdUser(), user.getUsername(),
+                    idBuku, LocalDateTime.now(), desc, type));
+        } catch (RuntimeException e) {
+            System.err.println("Gagal mencatat log: " + e.getMessage());
+        }
+    }
+
+    private String buildDiff(Buku lama, Buku baru) {
+        StringBuilder sb = new StringBuilder();
+        if (!lama.getJudul().equals(baru.getJudul()))
+            sb.append("judul: \"").append(lama.getJudul()).append("\" -> \"").append(baru.getJudul()).append("\"; ");
+        if (!lama.getNamaPenulis().equals(baru.getNamaPenulis()))
+            sb.append("penulis: ").append(lama.getNamaPenulis()).append(" -> ").append(baru.getNamaPenulis()).append("; ");
+        if (Double.compare(lama.getHarga(), baru.getHarga()) != 0)
+            sb.append("harga: ").append(formatPlainNumber(lama.getHarga())).append(" -> ").append(formatPlainNumber(baru.getHarga())).append("; ");
+        if (lama.getStock() != baru.getStock())
+            sb.append("stok: ").append(lama.getStock()).append(" -> ").append(baru.getStock()).append("; ");
+        if (lama.getTahunTerbit() != baru.getTahunTerbit())
+            sb.append("tahun: ").append(lama.getTahunTerbit()).append(" -> ").append(baru.getTahunTerbit()).append("; ");
+        return sb.toString();
     }
 
     public void setCartRepo(CartRepo cartRepo) {
@@ -465,7 +497,11 @@ public class BukuPanel extends javax.swing.JPanel {
         }
 
         try {
-            bukuModel.create(bukuBaru);
+        bukuModel.create(bukuBaru);
+        catatLog(bukuBaru.getIdBuku(), Log.typeAksi.CREATE,
+                "Menambah buku \"" + bukuBaru.getJudul() + "\" (" + bukuBaru.getNamaPenulis()
+                + ", harga " + formatPlainNumber(bukuBaru.getHarga()) + ", stok " + bukuBaru.getStock() + ")");
+            
             JOptionPane.showMessageDialog(this, "Buku \"" + bukuBaru.getJudul() + "\" berhasil ditambahkan.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
             refreshTable();
         } catch (RuntimeException e) {
@@ -479,13 +515,17 @@ public class BukuPanel extends javax.swing.JPanel {
             return;
         }
 
-        Buku bukuUpdate = buildBukuFromForm(selectedBuku.getIdBuku());
+        Buku lama = selectedBuku;
+        Buku bukuUpdate = buildBukuFromForm(lama.getIdBuku());
         if (bukuUpdate == null) {
             return;
         }
 
         try {
             bukuModel.update(bukuUpdate);
+            String diff = buildDiff(lama, bukuUpdate);
+            catatLog(bukuUpdate.getIdBuku(), Log.typeAksi.UPDATE,
+                    "Mengubah buku \"" + lama.getJudul() + "\": " + (diff.isEmpty() ? "tidak ada perubahan" : diff));
             JOptionPane.showMessageDialog(this, "Data buku berhasil diperbarui.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
             refreshTable();
         } catch (RuntimeException e) {
@@ -494,6 +534,7 @@ public class BukuPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        Buku dihapus = selectedBuku;
         if (selectedBuku == null) {
             JOptionPane.showMessageDialog(this, "Pilih buku yang ingin dihapus dari tabel terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
@@ -512,7 +553,10 @@ public class BukuPanel extends javax.swing.JPanel {
         }
 
         try {
-            bukuModel.delete(selectedBuku.getIdBuku());
+            bukuModel.delete(dihapus.getIdBuku());
+            catatLog(0, Log.typeAksi.DELETE,
+                    "Menghapus buku #" + dihapus.getIdBuku() + " \"" + dihapus.getJudul()
+                    + "\" (" + dihapus.getNamaPenulis() + ")");
             JOptionPane.showMessageDialog(this, "Buku berhasil dihapus.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
             refreshTable();
         } catch (RuntimeException e) {

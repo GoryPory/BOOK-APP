@@ -38,13 +38,14 @@ CREATE TABLE IF NOT EXISTS detail_transaksi (
 
 CREATE TABLE IF NOT EXISTS log_inventori (
     id_log INT AUTO_INCREMENT PRIMARY KEY,
-    id_user INT NOT NULL,
-    id_buku INT NOT NULL,
+    id_user INT NULL,
+    username VARCHAR(50) NOT NULL,
+    id_buku INT NULL,
     datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `desc` TEXT NOT NULL,
     type ENUM('CREATE', 'UPDATE', 'DELETE', 'TRANSAKSI') NOT NULL,
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
-    FOREIGN KEY (id_buku) REFERENCES buku(id_buku) ON DELETE CASCADE
+    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE SET NULL,
+    FOREIGN KEY (id_buku) REFERENCES buku(id_buku) ON DELETE SET NULL
 );
 
 INSERT INTO users (username, password, role) VALUES

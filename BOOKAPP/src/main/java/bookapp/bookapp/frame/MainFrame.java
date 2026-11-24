@@ -39,18 +39,6 @@ public class MainFrame extends javax.swing.JFrame {
         jTabbedPane1.addTab("Buku", bukuPanel1);
         jTabbedPane1.addTab("Kasir", kasirPanel2);
         jTabbedPane1.addTab("Laporan", laporanPanel2);
-
-        javax.swing.GroupLayout logoutPanel1Layout = new javax.swing.GroupLayout(logoutPanel1);
-        logoutPanel1.setLayout(logoutPanel1Layout);
-        logoutPanel1Layout.setHorizontalGroup(
-            logoutPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 351, Short.MAX_VALUE)
-        );
-        logoutPanel1Layout.setVerticalGroup(
-            logoutPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 551, Short.MAX_VALUE)
-        );
-
         jTabbedPane1.addTab("Logout", logoutPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

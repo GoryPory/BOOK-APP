@@ -51,7 +51,6 @@ public class LoginFrame extends javax.swing.JFrame {
 
         PasswordLabel.setText("Password");
 
-        PasswordField.setText("jPasswordField1");
         PasswordField.addActionListener(this::PasswordFieldActionPerformed);
 
         loginBtn.setText("Login");

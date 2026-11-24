@@ -21,9 +21,19 @@ public class MainFrameAdmin extends javax.swing.JFrame {
     }
     
     private void setupTabListener() {
+        bukuPanel1.setOnCartUpdated(() -> kasirPanel2.refreshCart());
+        kasirPanel2.setOnTransactionSuccess(() -> bukuPanel1.refreshTable());
+
         jTabbedPane1.addChangeListener(e -> {
-            if (jTabbedPane1.getSelectedComponent() == logPanel1) {
+            java.awt.Component selected = jTabbedPane1.getSelectedComponent();
+            if (selected == kasirPanel2) {
+                kasirPanel2.refreshCart();
+            } else if (selected == bukuPanel1) {
+                bukuPanel1.refreshTable();
+            } else if (selected == logPanel1) {
                 logPanel1.refreshData();
+            } else if (selected == laporanPanel2) {
+                laporanPanel2.refresh();
             }
         });
     }
@@ -60,7 +70,7 @@ public class MainFrameAdmin extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 444, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 444, Short.MAX_VALUE)
         );
 
         pack();

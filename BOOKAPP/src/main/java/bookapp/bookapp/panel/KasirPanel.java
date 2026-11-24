@@ -4,17 +4,115 @@
  */
 package bookapp.bookapp.panel;
 
+import bookapp.bookapp.entity.Buku;
+import bookapp.bookapp.entity.CartItem;
+import bookapp.bookapp.entity.DetailTransaksi;
+import bookapp.bookapp.entity.Log;
+import bookapp.bookapp.entity.Transaksi;
+import bookapp.bookapp.entity.Users;
+import bookapp.bookapp.model.BukuModel;
+import bookapp.bookapp.model.DetailTransaksiModel;
+import bookapp.bookapp.model.LogModel;
+import bookapp.bookapp.model.TransaksiModel;
+import bookapp.bookapp.repo.AuthRepo;
+import bookapp.bookapp.repo.CartRepo;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.beans.Beans;
+import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author rog
  */
 public class KasirPanel extends javax.swing.JPanel {
-
+    private final TransaksiModel transaksiModel = new TransaksiModel();
+    private final DetailTransaksiModel detailTransaksiModel = new DetailTransaksiModel();
+    private final BukuModel bukuModel = new BukuModel();
+    private final LogModel logModel = new LogModel();
+    private final NumberFormat rupiahFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+    private CartRepo cartRepo = CartRepo.getInstance();
+    private Runnable onTransactionSuccess;
     /**
      * Creates new form KasirPanel
      */
     public KasirPanel() {
         initComponents();
+        setupPanel();
+    }
+
+    private void setupPanel() {
+        txtTotal.setEditable(false);
+        keranjangTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        keranjangTable.setModel(new DefaultTableModel(
+                new Object[][]{},
+                new String[]{"No.", "Judul Buku", "Harga", "Jumlah", "Subtotal"}
+        ) {
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return false;
+            }
+        });
+
+        // Auto-refresh cart whenever this tab becomes visible
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                refreshCart();
+            }
+        });
+
+        if (!Beans.isDesignTime()) {
+            refreshCart();
+        }
+    }
+
+    public void setCartRepo(CartRepo cartRepo) {
+        if (cartRepo != null) {
+            this.cartRepo = cartRepo;
+            refreshCart();
+        }
+    }
+
+    public void setOnTransactionSuccess(Runnable onTransactionSuccess) {
+        this.onTransactionSuccess = onTransactionSuccess;
+    }
+
+    public void refreshCart() {
+        if (Beans.isDesignTime()) {
+            return;
+        }
+
+        DefaultTableModel model = (DefaultTableModel) keranjangTable.getModel();
+        model.setRowCount(0);
+
+        int no = 1;
+        for (CartItem item : cartRepo.getCart()) {
+            Buku b = item.getBuku();
+            model.addRow(new Object[]{
+                no++,
+                b.getJudul(),
+                rupiahFormat.format(b.getHarga()),
+                item.getJmlh(),
+                rupiahFormat.format(item.subTotal())
+            });
+        }
+
+        txtTotal.setText(rupiahFormat.format(cartRepo.total()));
+    }
+
+    public void resetCart() {
+        cartRepo.clear();
+        txtTunai.setText("");
+        refreshCart();
     }
 
     /**
@@ -33,7 +131,9 @@ public class KasirPanel extends javax.swing.JPanel {
         txtTotal = new javax.swing.JTextField();
         txtTunai = new javax.swing.JTextField();
         tunaiLabel = new javax.swing.JLabel();
+        btnReset = new javax.swing.JButton();
         btnBayar = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
 
         keranjangTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -54,8 +154,14 @@ public class KasirPanel extends javax.swing.JPanel {
 
         tunaiLabel.setText("Tunai");
 
+        btnReset.setText("Reset");
+        btnReset.addActionListener(this::btnResetActionPerformed);
+
         btnBayar.setText("Bayar");
         btnBayar.addActionListener(this::btnBayarActionPerformed);
+
+        btnDelete.setText("Delete");
+        btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -68,13 +174,19 @@ public class KasirPanel extends javax.swing.JPanel {
                     .addComponent(btnBayar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(keranjangLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnReset, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(totalLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtTotal, javax.swing.GroupLayout.Alignment.LEADING))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(totalLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtTotal))
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tunaiLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtTunai))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(tunaiLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(txtTunai)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -82,8 +194,8 @@ public class KasirPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(keranjangLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(totalLabel)
@@ -93,19 +205,195 @@ public class KasirPanel extends javax.swing.JPanel {
                         .addComponent(tunaiLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtTunai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(12, 12, 12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnReset)
+                    .addComponent(btnDelete))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBayar)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        if (cartRepo.getCart().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Keranjang sudah kosong.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Yakin ingin mengosongkan seluruh isi keranjang?",
+                "Konfirmasi Reset",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            resetCart();
+        }
+    }//GEN-LAST:event_btnResetActionPerformed
+
     private void btnBayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBayarActionPerformed
-        // TODO add your handling code here:
+        List<CartItem> items = new ArrayList<>(cartRepo.getCart());
+        if (items.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Keranjang masih kosong. Tambahkan buku terlebih dahulu.", "Keranjang Kosong", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Users currentUser = AuthRepo.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            JOptionPane.showMessageDialog(this, "Sesi login tidak ditemukan. Silakan login kembali.", "Autentikasi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String tunaiStr = txtTunai.getText().trim();
+        if (tunaiStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Masukkan jumlah uang tunai terlebih dahulu.", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        double tunai;
+        try {
+            tunai = Double.parseDouble(tunaiStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Nominal tunai harus berupa angka (contoh: 200000).", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        double totalBelanja = cartRepo.total();
+        if (tunai < totalBelanja) {
+            double kurang = totalBelanja - tunai;
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Uang tunai tidak cukup.\nKurang: " + rupiahFormat.format(kurang),
+                    "Pembayaran Gagal",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        // Validasi stok terbaru di database sebelum menyimpan transaksi
+        for (CartItem item : items) {
+            Buku freshBuku = bukuModel.findById(item.getBuku().getIdBuku());
+            if (freshBuku == null) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Buku \"" + item.getBuku().getJudul() + "\" sudah tidak ada di database.",
+                        "Error Stok",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+            if (freshBuku.getStock() < item.getJmlh()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Stok buku \"" + freshBuku.getJudul() + "\" tidak mencukupi.\n"
+                                + "Diminta: " + item.getJmlh() + ", Tersedia: " + freshBuku.getStock(),
+                        "Stok Tidak Cukup",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+        }
+
+        try {
+            LocalDateTime now = LocalDateTime.now();
+
+            // 1. Simpan header transaksi
+            Transaksi transaksi = new Transaksi(0, currentUser.getIdUser(), totalBelanja, tunai, now);
+            transaksiModel.create(transaksi);
+
+            // 2. Simpan detail transaksi, kurangi stok, dan catat log TRANSAKSI
+            for (CartItem item : items) {
+                int idBuku = item.getBuku().getIdBuku();
+                int jumlah = item.getJmlh();
+                double subtotal = item.subTotal();
+
+                DetailTransaksi detail = new DetailTransaksi(
+                        0,
+                        transaksi.getIdTransaksi(),
+                        idBuku,
+                        jumlah,
+                        subtotal
+                );
+                detailTransaksiModel.create(detail);
+
+                boolean stokUpdated = bukuModel.kurangiStok(idBuku, jumlah);
+                if (!stokUpdated) {
+                    throw new RuntimeException("Gagal mengurangi stok untuk buku \"" + item.getBuku().getJudul() + "\".");
+                }
+
+                Log log = new Log(
+                        0,
+                        currentUser.getIdUser(),
+                        idBuku,
+                        now,
+                        "Transaksi #" + transaksi.getIdTransaksi() + " - Terjual " + jumlah + "x " + item.getBuku().getJudul(),
+                        Log.typeAksi.TRANSAKSI
+                );
+                logModel.create(log);
+            }
+
+            double kembalian = tunai - totalBelanja;
+
+            // 3. Reset keranjang dan refresh UI
+            resetCart();
+
+            if (onTransactionSuccess != null) {
+                onTransactionSuccess.run();
+            }
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Transaksi #" + transaksi.getIdTransaksi() + " berhasil!\n"
+                            + "Total Belanja : " + rupiahFormat.format(totalBelanja) + "\n"
+                            + "Tunai         : " + rupiahFormat.format(tunai) + "\n"
+                            + "Kembalian     : " + rupiahFormat.format(kembalian),
+                    "Pembayaran Berhasil",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        } catch (RuntimeException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Gagal memproses transaksi.\nDetail: " + e.getMessage(),
+                    "Error Transaksi",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }//GEN-LAST:event_btnBayarActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        int selectedRow = keranjangTable.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Pilih item di keranjang yang ingin dihapus terlebih dahulu.",
+                    "Peringatan",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        CartItem item = cartRepo.getCart().get(selectedRow);
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Hapus \"" + item.getBuku().getJudul() + "\" (" + item.getJmlh() + "x) dari keranjang?",
+                "Konfirmasi Hapus",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            cartRepo.removeItemAt(selectedRow);
+            refreshCart();
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBayar;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnReset;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel keranjangLabel;
     private javax.swing.JTable keranjangTable;

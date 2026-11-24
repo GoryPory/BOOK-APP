@@ -4,6 +4,23 @@
  */
 package bookapp.bookapp.panel;
 
+import bookapp.bookapp.entity.DetailTransaksi;
+import bookapp.bookapp.entity.Transaksi;
+import bookapp.bookapp.model.BukuModel;
+import bookapp.bookapp.model.DetailTransaksiModel;
+import bookapp.bookapp.model.TransaksiModel;
+import java.awt.Dimension;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableModel;
+import java.beans.Beans;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
+
 /**
  *
  * @author rog
@@ -13,8 +30,25 @@ public class LaporanPanel extends javax.swing.JPanel {
     /**
      * Creates new form LaporanPanel
      */
+    private final TransaksiModel transaksiModel = new TransaksiModel();
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    private boolean isUpdatingDates = false;
+
     public LaporanPanel() {
         initComponents();
+        setupPanel();
+    }
+
+    private void setupPanel() {
+        dateDari.setDateFormatString("dd-MM-yyyy");
+        dateSampai.setDateFormatString("dd-MM-yyyy");
+
+        dateDari.addPropertyChangeListener("date", evt -> onDateChanged(true));
+        dateSampai.addPropertyChangeListener("date", evt -> onDateChanged(false));
+
+        if (!Beans.isDesignTime()) {
+            refresh();
+        }
     }
 
     /**
@@ -29,49 +63,241 @@ public class LaporanPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         laporanTable = new javax.swing.JTable();
         refresh = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        dateDari = new com.toedter.calendar.JDateChooser();
+        jLabel3 = new javax.swing.JLabel();
+        dateSampai = new com.toedter.calendar.JDateChooser();
+        btnReset = new javax.swing.JButton();
 
         laporanTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "No", "Tanggal", "Total Belanja", "Tunai", "Detail"
+                "No", "Tanggal", "Total Belanja", "Tunai"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        laporanTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TableClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(laporanTable);
 
         refresh.setText("Refresh");
         refresh.addActionListener(this::refreshActionPerformed);
 
+        jLabel1.setText("Double-click sebuah barisan untuk melihat detail transaksi");
+
+        jLabel2.setText("Dari");
+
+        jLabel3.setText("Sampai");
+
+        btnReset.setText("Reset");
+        btnReset.addActionListener(this::btnResetActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(refresh)
-                .addContainerGap())
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(dateDari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(dateSampai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnReset)
+                    .addComponent(refresh))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(refresh)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(refresh)
+                    .addComponent(jLabel1))
+                .addGap(1, 1, 1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(dateSampai, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnReset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(dateDari, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(8, 8, 8)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 392, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshActionPerformed
-        // TODO add your handling code here:
+        refresh();
     }//GEN-LAST:event_refreshActionPerformed
 
+    private void TableClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableClicked
+        if (evt.getClickCount() == 2) {
+            int viewRow = laporanTable.getSelectedRow();
+            if (viewRow != -1) {
+                // convertRowIndexToModel ensures you get the right row even if the user sorted the table
+                int modelRow = laporanTable.convertRowIndexToModel(viewRow);
+
+                // Assuming column 0 holds the Transaction ID
+                Object transactionId = laporanTable.getModel().getValueAt(modelRow, 0);
+
+                showTransactionItemsPopup(transactionId);
+            }
+        }
+    }//GEN-LAST:event_TableClicked
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        isUpdatingDates = true;
+        try {
+            dateDari.setDate(null);
+            dateSampai.setDate(null);
+        } finally {
+            isUpdatingDates = false;
+        }
+        refresh();
+    }//GEN-LAST:event_btnResetActionPerformed
+
+    private void showTransactionItemsPopup(Object transactionId) {
+        // 1. Define columns for the itemized popup table
+        String[] columns = {"Nama Barang", "Harga", "Jumlah", "Subtotal"};
+
+        // Make the popup table read-only
+        DefaultTableModel itemModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        // 2. Fetch the items belonging to transactionId and populate rows
+        // Replace this loop with your actual data lookup (e.g., from your list or database)
+        
+        DetailTransaksiModel dtm = new DetailTransaksiModel();
+        BukuModel bm = new BukuModel();
+        for (DetailTransaksi item : dtm.searchByTransaksi((int)transactionId)) {
+            var buku = bm.findById(item.getIdBuku());
+            double subtotal = buku.getHarga() * item.getJumlah();
+            itemModel.addRow(new Object[]{
+                buku.getJudul(),
+                String.format("%.2f", new Object[]{buku.getHarga()}),
+                item.getJumlah(),
+                String.format("%.2f", subtotal)
+            });
+        }
+
+        // 3. Create the JTable and wrap it in a JScrollPane (required so column headers appear)
+        JTable itemTable = new JTable(itemModel);
+        itemTable.setFillsViewportHeight(true);
+
+        JScrollPane scrollPane = new JScrollPane(itemTable);
+        scrollPane.setPreferredSize(new Dimension(450, 220)); // Control popup table size
+
+        // 4. Display the table inside a standard modal popup
+        JOptionPane.showMessageDialog(
+            this, 
+            scrollPane, 
+            "Items for Transaction #" + transactionId, 
+            JOptionPane.PLAIN_MESSAGE
+        );
+    }
+    
+    private void onDateChanged(boolean dariChanged) {
+        if (isUpdatingDates || Beans.isDesignTime()) {
+            return;
+        }
+
+        LocalDate dari = toLocalDate(dateDari.getDate());
+        LocalDate sampai = toLocalDate(dateSampai.getDate());
+
+        if (dari != null && sampai != null && dari.isAfter(sampai)) {
+            isUpdatingDates = true;
+            try {
+                if (dariChanged) {
+                    dateSampai.setDate(dateDari.getDate());
+                } else {
+                    dateDari.setDate(dateSampai.getDate());
+                }
+            } finally {
+                isUpdatingDates = false;
+            }
+        }
+
+        applyFilter();
+    }
+
+    public void refresh() {
+        applyFilter();
+    }
+
+    private void applyFilter() {
+        if (Beans.isDesignTime()) {
+            return;
+        }
+
+        LocalDate dari = toLocalDate(dateDari.getDate());
+        LocalDate sampai = toLocalDate(dateSampai.getDate());
+
+        List<Transaksi> list = (dari == null && sampai == null)
+                ? transaksiModel.readAll()
+                : transaksiModel.findByDateRange(dari, sampai);
+
+        populateTable(list);
+    }
+
+    private LocalDate toLocalDate(Date date) {
+        if (date == null) {
+            return null;
+        }
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    private void populateTable(List<Transaksi> list) {
+        DefaultTableModel model = (DefaultTableModel) laporanTable.getModel();
+        model.setRowCount(0);
+
+        for (Transaksi t : list) {
+            String tanggal = t.getDatetime() != null
+                    ? t.getDatetime().format(dateTimeFormatter)
+                    : "-";
+            model.addRow(new Object[]{
+                t.getIdTransaksi(),
+                tanggal,
+                t.getTotalBelanja(),
+                t.getUangPembayaran()
+            });
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnReset;
+    private com.toedter.calendar.JDateChooser dateDari;
+    private com.toedter.calendar.JDateChooser dateSampai;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable laporanTable;
     private javax.swing.JButton refresh;

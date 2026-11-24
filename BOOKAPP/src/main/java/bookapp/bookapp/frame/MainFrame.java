@@ -17,6 +17,21 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
+        setupTabListener();
+    }
+
+    private void setupTabListener() {
+        bukuPanel1.setOnCartUpdated(() -> kasirPanel2.refreshCart());
+        kasirPanel2.setOnTransactionSuccess(() -> bukuPanel1.refreshTable());
+
+        jTabbedPane1.addChangeListener(e -> {
+            java.awt.Component selected = jTabbedPane1.getSelectedComponent();
+            if (selected == kasirPanel2) {
+                kasirPanel2.refreshCart();
+            } else if (selected == bukuPanel1) {
+                bukuPanel1.refreshTable();
+            }
+        });
     }
 
     /**
@@ -31,33 +46,44 @@ public class MainFrame extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         bukuPanel1 = new bookapp.bookapp.panel.BukuPanel();
         kasirPanel2 = new bookapp.bookapp.panel.KasirPanel();
-        laporanPanel2 = new bookapp.bookapp.panel.LaporanPanel();
         logoutPanel1 = new bookapp.bookapp.panel.LogoutPanel();
+        laporanPanel = new bookapp.bookapp.panel.LaporanPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jTabbedPane1.addChangeListener(this::OnStateChanged);
         jTabbedPane1.addTab("Buku", bukuPanel1);
         jTabbedPane1.addTab("Kasir", kasirPanel2);
-        jTabbedPane1.addTab("Laporan", laporanPanel2);
         jTabbedPane1.addTab("Logout", logoutPanel1);
+        jTabbedPane1.addTab("Laporan", laporanPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 648, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 622, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void OnStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_OnStateChanged
+        int i = jTabbedPane1.getSelectedIndex();
+        
+        switch(i){
+            case 2:
+                laporanPanel.refresh();
+                break;
+        }
+    }//GEN-LAST:event_OnStateChanged
 
     /**
      * @param args the command line arguments
@@ -88,7 +114,7 @@ public class MainFrame extends javax.swing.JFrame {
     private bookapp.bookapp.panel.BukuPanel bukuPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private bookapp.bookapp.panel.KasirPanel kasirPanel2;
-    private bookapp.bookapp.panel.LaporanPanel laporanPanel2;
     private bookapp.bookapp.panel.LogoutPanel logoutPanel1;
+    private bookapp.bookapp.panel.LaporanPanel laporanPanel;
     // End of variables declaration//GEN-END:variables
 }

@@ -37,6 +37,8 @@ public class LoginFrame extends javax.swing.JFrame {
         loginBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
+        setForeground(java.awt.Color.orange);
 
         Title.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

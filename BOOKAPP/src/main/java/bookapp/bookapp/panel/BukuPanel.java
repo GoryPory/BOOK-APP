@@ -46,6 +46,12 @@ public class BukuPanel extends javax.swing.JPanel {
     btnUpdate.setVisible(admin);
     btnDelete.setVisible(admin);
     btnTambah.setVisible(!admin);
+    
+    txtJudul.setEditable(admin);
+    txtPenulis.setEditable(admin);
+    txtTahunTerbit.setEditable(admin);
+    txtStok.setEditable(admin);
+    txtHarga.setEditable(admin);
     } 
     
     private void setupPanel() {

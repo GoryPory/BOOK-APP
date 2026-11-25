@@ -65,11 +65,43 @@ public class LaporanPanel extends javax.swing.JPanel {
         refresh = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        dateDari = new com.toedter.calendar.JDateChooser();
+        dateDari = new com.toedter.calendar.JDateChooser(new com.toedter.calendar.JTextFieldDateEditor() {
+            @Override
+            public void setForeground(java.awt.Color fg) {
+                super.setForeground(new java.awt.Color(91, 192, 190));
+            }
+            @Override
+            public void setBackground(java.awt.Color bg) {
+                super.setBackground(new java.awt.Color(58, 80, 107));
+            }
+            @Override
+            public void setBorder(javax.swing.border.Border border) {
+                super.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 6, 0, 6));
+            }
+        })
+        ;
         jLabel3 = new javax.swing.JLabel();
-        dateSampai = new com.toedter.calendar.JDateChooser();
+        dateSampai = new com.toedter.calendar.JDateChooser(new com.toedter.calendar.JTextFieldDateEditor() {
+            @Override
+            public void setForeground(java.awt.Color fg) {
+                super.setForeground(new java.awt.Color(91, 192, 190));
+            }
+            @Override
+            public void setBackground(java.awt.Color bg) {
+                super.setBackground(new java.awt.Color(58, 80, 107));
+            }
+            @Override
+            public void setBorder(javax.swing.border.Border border) {
+                super.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 6, 0, 6));
+            }
+        })
+        ;
         btnReset = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(11, 19, 43));
+
+        laporanTable.setBackground(new java.awt.Color(11, 19, 43));
+        laporanTable.setForeground(new java.awt.Color(255, 255, 255));
         laporanTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -89,22 +121,64 @@ public class LaporanPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        laporanTable.setSelectionBackground(new java.awt.Color(91, 192, 190));
+        laporanTable.setSelectionForeground(new java.awt.Color(28, 37, 65));
         laporanTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 TableClicked(evt);
             }
         });
         jScrollPane1.setViewportView(laporanTable);
+        laporanTable.setFillsViewportHeight(true);
+        laporanTable.getParent().setBackground(laporanTable.getBackground());
+        javax.swing.table.JTableHeader header = laporanTable.getTableHeader();
+        header.setBackground(new java.awt.Color(28, 37, 65));
+        header.setForeground(new java.awt.Color(91, 192, 190));
+        header.setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setBackground(new java.awt.Color(28, 37, 65));
+                setForeground(new java.awt.Color(91, 192, 190));
+                setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", java.awt.Font.BOLD, 12));
+                setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(58, 80, 107)));
+                return this;
+            }
+        });
 
+        refresh.setBackground(new java.awt.Color(58, 80, 107));
+        refresh.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        refresh.setForeground(new java.awt.Color(255, 255, 255));
         refresh.setText("Refresh");
         refresh.addActionListener(this::refreshActionPerformed);
 
+        jLabel1.setBackground(new java.awt.Color(58, 80, 107));
+        jLabel1.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 12)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Double-click sebuah barisan untuk melihat detail transaksi");
 
+        jLabel2.setBackground(new java.awt.Color(58, 80, 107));
+        jLabel2.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Dari");
 
+        dateDari.setBackground(new java.awt.Color(58, 80, 107));
+        dateDari.setForeground(new java.awt.Color(91, 192, 190));
+        dateDari.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+
+        jLabel3.setBackground(new java.awt.Color(58, 80, 107));
+        jLabel3.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Sampai");
 
+        dateSampai.setBackground(new java.awt.Color(58, 80, 107));
+        dateSampai.setForeground(new java.awt.Color(91, 192, 190));
+        dateSampai.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+
+        btnReset.setBackground(new java.awt.Color(58, 80, 107));
+        btnReset.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        btnReset.setForeground(new java.awt.Color(255, 255, 255));
         btnReset.setText("Reset");
         btnReset.addActionListener(this::btnResetActionPerformed);
 
@@ -146,7 +220,7 @@ public class LaporanPanel extends javax.swing.JPanel {
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(8, 8, 8)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 392, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

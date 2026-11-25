@@ -18,6 +18,7 @@ public class LoginFrame extends javax.swing.JFrame {
      */
     public LoginFrame() {
         initComponents();
+        getContentPane().setBackground(new java.awt.Color(11, 19, 43));
     }
 
     /**
@@ -40,19 +41,36 @@ public class LoginFrame extends javax.swing.JFrame {
         setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Yellow"));
         setForeground(java.awt.Color.orange);
 
-        Title.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        Title.setBackground(new java.awt.Color(11, 19, 43));
+        Title.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 1, 18)); // NOI18N
+        Title.setForeground(new java.awt.Color(255, 255, 255));
         Title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         Title.setText("Login Book App");
         Title.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
+        UsernameLabel.setBackground(new java.awt.Color(11, 19, 43));
+        UsernameLabel.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 1, 12)); // NOI18N
+        UsernameLabel.setForeground(new java.awt.Color(255, 255, 255));
         UsernameLabel.setText("Username");
 
+        UsernameField.setBackground(new java.awt.Color(58, 80, 107));
+        UsernameField.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 1, 12)); // NOI18N
+        UsernameField.setForeground(new java.awt.Color(255, 255, 255));
         UsernameField.addActionListener(this::UsernameFieldActionPerformed);
 
+        PasswordLabel.setBackground(new java.awt.Color(11, 19, 43));
+        PasswordLabel.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 1, 12)); // NOI18N
+        PasswordLabel.setForeground(new java.awt.Color(255, 255, 255));
         PasswordLabel.setText("Password");
 
+        PasswordField.setBackground(new java.awt.Color(58, 80, 107));
+        PasswordField.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 1, 12)); // NOI18N
+        PasswordField.setForeground(new java.awt.Color(255, 255, 255));
         PasswordField.addActionListener(this::PasswordFieldActionPerformed);
 
+        loginBtn.setBackground(new java.awt.Color(58, 80, 107));
+        loginBtn.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 1, 10)); // NOI18N
+        loginBtn.setForeground(new java.awt.Color(255, 255, 255));
         loginBtn.setText("Login");
         loginBtn.addActionListener(this::loginBtnActionPerformed);
 
@@ -74,8 +92,9 @@ public class LoginFrame extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(12, 12, 12)
                 .addComponent(Title, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(UsernameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(UsernameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -83,7 +102,7 @@ public class LoginFrame extends javax.swing.JFrame {
                 .addComponent(PasswordLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(PasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addComponent(loginBtn)
                 .addContainerGap())
         );

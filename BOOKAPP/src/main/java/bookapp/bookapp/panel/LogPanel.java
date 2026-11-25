@@ -193,11 +193,47 @@ public class LogPanel extends javax.swing.JPanel {
         refresh = new javax.swing.JButton();
         filterBox = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
-        dateDari = new com.toedter.calendar.JDateChooser();
+        dateDari =  new com.toedter.calendar.JDateChooser(new com.toedter.calendar.JTextFieldDateEditor() {
+            {
+                setBackground(new java.awt.Color(58, 80, 107));
+                setCaretColor(new java.awt.Color(91, 192, 190));
+                setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 6, 0, 6));
+            }
+            @Override
+            public void setForeground(java.awt.Color fg) {
+                super.setForeground(new java.awt.Color(91, 192, 190));
+            }
+            @Override
+            public void setBackground(java.awt.Color bg) {
+                super.setBackground(new java.awt.Color(58, 80, 107));
+            }
+        });
         jLabel3 = new javax.swing.JLabel();
-        dateSampai = new com.toedter.calendar.JDateChooser();
+        dateSampai = new com.toedter.calendar.JDateChooser(new com.toedter.calendar.JTextFieldDateEditor() {
+            {
+                setBackground(new java.awt.Color(58, 80, 107));
+                setCaretColor(new java.awt.Color(91, 192, 190));
+                setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 6, 0, 6));
+            }
+            @Override
+            public void setForeground(java.awt.Color fg) {
+                super.setForeground(new java.awt.Color(91, 192, 190));
+            }
+            @Override
+            public void setBackground(java.awt.Color bg) {
+                super.setBackground(new java.awt.Color(58, 80, 107));
+            }
+        });
         btnReset = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(11, 19, 43));
+
+        jScrollPane.setBackground(new java.awt.Color(11, 19, 43));
+        jScrollPane.setForeground(new java.awt.Color(255, 255, 255));
+
+        logTable.setBackground(new java.awt.Color(11, 19, 43));
+        logTable.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        logTable.setForeground(new java.awt.Color(255, 255, 255));
         logTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
@@ -210,17 +246,56 @@ public class LogPanel extends javax.swing.JPanel {
             }
         ));
         jScrollPane.setViewportView(logTable);
+        logTable.setSelectionBackground(new java.awt.Color(91, 192, 190));
+        logTable.setSelectionForeground(new java.awt.Color(28, 37, 65));
+        logTable.setFillsViewportHeight(true);
+        logTable.getParent().setBackground(logTable.getBackground());
 
+        javax.swing.table.JTableHeader header = logTable.getTableHeader();
+        header.setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setBackground(new java.awt.Color(28, 37, 65));
+                setForeground(new java.awt.Color(91, 192, 190));
+                setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", java.awt.Font.BOLD, 12));
+                setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(58, 80, 107)));
+                return this;
+            }
+        });
+
+        refresh.setBackground(new java.awt.Color(58, 80, 107));
+        refresh.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        refresh.setForeground(new java.awt.Color(255, 255, 255));
         refresh.setText("Refresh");
         refresh.addActionListener(this::refreshActionPerformed);
 
+        filterBox.setBackground(new java.awt.Color(58, 80, 107));
+        filterBox.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        filterBox.setForeground(new java.awt.Color(255, 255, 255));
         filterBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Log", "Create Log", "Update Log", "Delete Log" }));
         filterBox.addActionListener(this::filterBoxActionPerformed);
 
+        jLabel2.setBackground(new java.awt.Color(11, 19, 43));
+        jLabel2.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Dari");
 
+        dateDari.setBackground(new java.awt.Color(58, 80, 107));
+        dateDari.setForeground(new java.awt.Color(255, 255, 255));
+
+        jLabel3.setBackground(new java.awt.Color(11, 19, 43));
+        jLabel3.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Sampai");
 
+        dateSampai.setBackground(new java.awt.Color(58, 80, 107));
+        dateSampai.setForeground(new java.awt.Color(255, 255, 255));
+
+        btnReset.setBackground(new java.awt.Color(58, 80, 107));
+        btnReset.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        btnReset.setForeground(new java.awt.Color(255, 255, 255));
         btnReset.setText("Reset");
         btnReset.addActionListener(this::btnResetActionPerformed);
 
@@ -233,7 +308,7 @@ public class LogPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(filterBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(filterBox, 0, 303, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(refresh))
                     .addGroup(layout.createSequentialGroup()
@@ -263,7 +338,7 @@ public class LogPanel extends javax.swing.JPanel {
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnReset, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
+                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

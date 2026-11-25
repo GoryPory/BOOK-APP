@@ -30,12 +30,22 @@ public class LogoutPanel extends javax.swing.JPanel {
         returnBtn = new javax.swing.JButton();
         yesBtn = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(11, 19, 43));
+
+        jLabel1.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Do you want to log out ?");
 
+        returnBtn.setBackground(new java.awt.Color(58, 80, 107));
+        returnBtn.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 12)); // NOI18N
+        returnBtn.setForeground(new java.awt.Color(255, 255, 255));
         returnBtn.setText("Return");
         returnBtn.addActionListener(this::returnBtnActionPerformed);
 
+        yesBtn.setBackground(new java.awt.Color(58, 80, 107));
+        yesBtn.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 12)); // NOI18N
+        yesBtn.setForeground(new java.awt.Color(255, 255, 255));
         yesBtn.setText("Yes");
         yesBtn.addActionListener(this::yesBtnActionPerformed);
 
@@ -63,7 +73,7 @@ public class LogoutPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(returnBtn)
                     .addComponent(yesBtn))
-                .addContainerGap(99, Short.MAX_VALUE))
+                .addContainerGap(89, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

@@ -135,6 +135,11 @@ public class KasirPanel extends javax.swing.JPanel {
         btnBayar = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(11, 19, 43));
+
+        jScrollPane1.setBackground(new java.awt.Color(11, 19, 43));
+
+        keranjangTable.setBackground(new java.awt.Color(11, 19, 43));
         keranjangTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
@@ -147,19 +152,64 @@ public class KasirPanel extends javax.swing.JPanel {
             }
         ));
         jScrollPane1.setViewportView(keranjangTable);
+        keranjangTable.setForeground(new java.awt.Color(255, 255, 255));
+        keranjangTable.setSelectionBackground(new java.awt.Color(91, 192, 190));
+        keranjangTable.setSelectionForeground(new java.awt.Color(28, 37, 65));
+        keranjangTable.setFillsViewportHeight(true);
+        keranjangTable.getParent().setBackground(keranjangTable.getBackground());
 
+        javax.swing.table.JTableHeader header = keranjangTable.getTableHeader();
+        header.setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setBackground(new java.awt.Color(28, 37, 65));
+                setForeground(new java.awt.Color(91, 192, 190));
+                setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", java.awt.Font.BOLD, 12));
+                setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(58, 80, 107)));
+                return this;
+            }
+        });
+
+        keranjangLabel.setBackground(new java.awt.Color(11, 19, 43));
+        keranjangLabel.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 1, 14)); // NOI18N
+        keranjangLabel.setForeground(new java.awt.Color(255, 255, 255));
         keranjangLabel.setText("Keranjang:");
 
+        totalLabel.setBackground(new java.awt.Color(11, 19, 43));
+        totalLabel.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        totalLabel.setForeground(new java.awt.Color(255, 255, 255));
         totalLabel.setText("Total");
 
+        txtTotal.setBackground(new java.awt.Color(58, 80, 107));
+        txtTotal.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        txtTotal.setForeground(new java.awt.Color(255, 255, 255));
+
+        txtTunai.setBackground(new java.awt.Color(58, 80, 107));
+        txtTunai.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        txtTunai.setForeground(new java.awt.Color(255, 255, 255));
+
+        tunaiLabel.setBackground(new java.awt.Color(11, 19, 43));
+        tunaiLabel.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        tunaiLabel.setForeground(new java.awt.Color(255, 255, 255));
         tunaiLabel.setText("Tunai");
 
+        btnReset.setBackground(new java.awt.Color(58, 80, 107));
+        btnReset.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        btnReset.setForeground(new java.awt.Color(255, 255, 255));
         btnReset.setText("Reset");
         btnReset.addActionListener(this::btnResetActionPerformed);
 
+        btnBayar.setBackground(new java.awt.Color(58, 80, 107));
+        btnBayar.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        btnBayar.setForeground(new java.awt.Color(255, 255, 255));
         btnBayar.setText("Bayar");
         btnBayar.addActionListener(this::btnBayarActionPerformed);
 
+        btnDelete.setBackground(new java.awt.Color(58, 80, 107));
+        btnDelete.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        btnDelete.setForeground(new java.awt.Color(255, 255, 255));
         btnDelete.setText("Delete");
         btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
@@ -192,9 +242,10 @@ public class KasirPanel extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(keranjangLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()

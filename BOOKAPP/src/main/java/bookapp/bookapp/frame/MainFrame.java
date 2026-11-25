@@ -16,8 +16,21 @@ public class MainFrame extends javax.swing.JFrame {
      * Creates new form MainFrame
      */
     public MainFrame() {
+        javax.swing.UIManager.put("TabbedPane.contentAreaColor", new java.awt.Color(11, 19, 43));
+        javax.swing.UIManager.put("TabbedPane.selected", new java.awt.Color(28, 37, 65));
+        javax.swing.UIManager.put("TabbedPane.background", new java.awt.Color(11, 19, 43));
+        javax.swing.UIManager.put("TabbedPane.shadow", new java.awt.Color(11, 19, 43));
+        javax.swing.UIManager.put("TabbedPane.darkShadow", new java.awt.Color(11, 19, 43));
+        javax.swing.UIManager.put("TabbedPane.highlight", new java.awt.Color(58, 80, 107));
+        javax.swing.UIManager.put("TabbedPane.light", new java.awt.Color(58, 80, 107));
+
         initComponents();
         setupTabListener();
+    
+        getContentPane().setBackground(new java.awt.Color(11, 19, 43));
+        jTabbedPane1.setOpaque(true);
+        jTabbedPane1.setBackground(new java.awt.Color(11, 19, 43));
+        jTabbedPane1.setForeground(new java.awt.Color(91, 192, 190));       
     }
 
     private void setupTabListener() {

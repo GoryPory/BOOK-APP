@@ -235,6 +235,14 @@ public class BukuPanel extends javax.swing.JPanel {
         btnCreate = new javax.swing.JButton();
         btnTambah = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(11, 19, 43));
+
+        jScrollPane.setBackground(new java.awt.Color(28, 37, 65));
+        jScrollPane.setForeground(new java.awt.Color(255, 255, 255));
+
+        bukuTable.setBackground(new java.awt.Color(28, 37, 65));
+        bukuTable.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        bukuTable.setForeground(new java.awt.Color(255, 255, 255));
         bukuTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
@@ -255,37 +263,100 @@ public class BukuPanel extends javax.swing.JPanel {
             }
         });
         jScrollPane.setViewportView(bukuTable);
+        bukuTable.setSelectionBackground(new java.awt.Color(91, 192, 190));
+        bukuTable.setSelectionForeground(new java.awt.Color(28, 37, 65));
+        bukuTable.setFillsViewportHeight(true);
+        bukuTable.getParent().setBackground(bukuTable.getBackground());
 
-        txtSearch.setText("jTextField1");
+        javax.swing.table.JTableHeader header = bukuTable.getTableHeader();
+        header.setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setBackground(new java.awt.Color(11, 19, 43));
+                setForeground(new java.awt.Color(91, 192, 190));
+                setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", java.awt.Font.BOLD, 12));
+                setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 1, new java.awt.Color(58, 80, 107)));
+                return this;
+            }
+        });
+
+        txtSearch.setBackground(new java.awt.Color(28, 37, 65));
+        txtSearch.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        txtSearch.setForeground(new java.awt.Color(255, 255, 255));
         txtSearch.setPreferredSize(new java.awt.Dimension(300, 26));
         txtSearch.addActionListener(this::txtSearchActionPerformed);
 
+        btnSearch.setBackground(new java.awt.Color(58, 80, 107));
+        btnSearch.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        btnSearch.setForeground(new java.awt.Color(255, 255, 255));
         btnSearch.setText("Search");
         btnSearch.addActionListener(this::btnSearchActionPerformed);
 
+        labelJudul.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        labelJudul.setForeground(new java.awt.Color(255, 255, 255));
         labelJudul.setText("Judul Buku");
 
+        txtJudul.setBackground(new java.awt.Color(28, 37, 65));
+        txtJudul.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        txtJudul.setForeground(new java.awt.Color(255, 255, 255));
+
+        labelPenulis.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        labelPenulis.setForeground(new java.awt.Color(255, 255, 255));
         labelPenulis.setText("Penulis Buku");
 
+        txtPenulis.setBackground(new java.awt.Color(28, 37, 65));
+        txtPenulis.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        txtPenulis.setForeground(new java.awt.Color(255, 255, 255));
         txtPenulis.setPreferredSize(new java.awt.Dimension(1, 26));
 
+        labelTahunTerbit.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        labelTahunTerbit.setForeground(new java.awt.Color(255, 255, 255));
         labelTahunTerbit.setText("Tahun Terbit");
 
+        txtTahunTerbit.setBackground(new java.awt.Color(28, 37, 65));
+        txtTahunTerbit.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        txtTahunTerbit.setForeground(new java.awt.Color(255, 255, 255));
+
+        labelStok.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        labelStok.setForeground(new java.awt.Color(255, 255, 255));
         labelStok.setText("Stok Buku");
 
+        txtStok.setBackground(new java.awt.Color(28, 37, 65));
+        txtStok.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        txtStok.setForeground(new java.awt.Color(255, 255, 255));
         txtStok.setPreferredSize(new java.awt.Dimension(1, 26));
 
+        labelHarga.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        labelHarga.setForeground(new java.awt.Color(255, 255, 255));
         labelHarga.setText("Harga Buku");
 
+        txtHarga.setBackground(new java.awt.Color(28, 37, 65));
+        txtHarga.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        txtHarga.setForeground(new java.awt.Color(255, 255, 255));
+
+        btnUpdate.setBackground(new java.awt.Color(58, 80, 107));
+        btnUpdate.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        btnUpdate.setForeground(new java.awt.Color(255, 255, 255));
         btnUpdate.setText("UPDATE");
         btnUpdate.addActionListener(this::btnUpdateActionPerformed);
 
+        btnDelete.setBackground(new java.awt.Color(58, 80, 107));
+        btnDelete.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        btnDelete.setForeground(new java.awt.Color(255, 255, 255));
         btnDelete.setText("DELETE");
         btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
+        btnCreate.setBackground(new java.awt.Color(58, 80, 107));
+        btnCreate.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        btnCreate.setForeground(new java.awt.Color(255, 255, 255));
         btnCreate.setText("CREATE");
         btnCreate.addActionListener(this::btnCreateActionPerformed);
 
+        btnTambah.setBackground(new java.awt.Color(58, 80, 107));
+        btnTambah.setFont(new java.awt.Font("JetBrainsMonoNL NF SemiBold", 0, 10)); // NOI18N
+        btnTambah.setForeground(new java.awt.Color(255, 255, 255));
         btnTambah.setText("Tambah ke Keranjang");
         btnTambah.addActionListener(this::btnTambahActionPerformed);
 

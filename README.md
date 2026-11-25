@@ -47,49 +47,50 @@ Database bernama `db_bookapp` dengan 5 tabel utama:
 ### 1. Tabel `users` (Akses Login)
 | Kolom | Tipe Data | Keterangan |
 | :--- | :--- | :--- |
-| `id_user` | INT (11) | Primary Key, Auto Increment |
-| `username` | VARCHAR (50) | Nama pengguna |
-| `password` | VARCHAR (255) | Kata sandi |
-| `role` | VARCHAR (20) | "Admin" atau "Kasir" |
+| `id_user` | INT | Primary Key, Auto Increment |
+| `username` | VARCHAR(50) | Nama pengguna (`NOT NULL`) |
+| `password` | VARCHAR(255) | Kata sandi (`NOT NULL`) |
+| `role` | VARCHAR(20) | "Admin" atau "Kasir" (`NOT NULL`) |
 
 ### 2. Tabel `buku` (Master Barang)
 | Kolom | Tipe Data | Keterangan |
 | :--- | :--- | :--- |
-| `id_buku` | INT (11) | Primary Key |
-| `judul` | VARCHAR (150) | Judul buku |
-| `penulis` | VARCHAR (100) | Nama penulis |
-| `harga` | DECIMAL (10,2) | Harga jual |
-| `stok` | INT (11) | Sisa stok fisik |
-| `tahun_terbit` | INT(4) | Kapan terbitnya |
+| `id_buku` | INT | Primary Key, Auto Increment |
+| `judul` | VARCHAR(150) | Judul buku (`NOT NULL`) |
+| `penulis` | VARCHAR(100) | Nama penulis (`NOT NULL`) |
+| `harga` | DECIMAL(10,2) | Harga jual (`NOT NULL`) |
+| `stok` | INT | Sisa stok fisik (`NOT NULL`, `DEFAULT 0`) |
+| `tahun_terbit` | INT(4) | Tahun terbit buku (`NOT NULL`) |
 
 ### 3. Tabel `transaksi` (Header Pembelian)
 | Kolom | Tipe Data | Keterangan |
 | :--- | :--- | :--- |
-| `id_transaksi` | INT (11) | Primary Key |
-| `datetime` | DATETIME | Waktu transaksi |
-| `total_belanja`| DECIMAL (10,2) | Total harga semua item |
-| `tunai` | DECIMAL (10,2) | Uang pembayaran pelanggan |
-| `id_user` | INT (11) | Foreign Key ➔ `users.id_user` |
+| `id_transaksi` | INT | Primary Key, Auto Increment |
+| `datetime` | TIMESTAMP | Waktu transaksi (`DEFAULT CURRENT_TIMESTAMP`) |
+| `total_belanja` | DECIMAL(10,2) | Total harga semua item (`NOT NULL`) |
+| `tunai` | DECIMAL(10,2) | Uang pembayaran pelanggan (`NOT NULL`) |
+| `id_user` | INT | Foreign Key ➔ `users.id_user` (`NOT NULL`, `ON DELETE RESTRICT`) |
 
 ### 4. Tabel `detail_transaksi` (Item Keranjang)
 | Kolom | Tipe Data | Keterangan |
 | :--- | :--- | :--- |
-| `id_detail` | INT (11) | Primary Key, Auto Increment |
-| `id_transaksi` | INT (11) | Foreign Key ➔ `transaksi.id_transaksi` |
-| `id_buku` | INT(11) | Foreign Key ➔ `buku.id_buku` |
-| `jumlah` | INT (5) | Kuantitas buku dibeli |
-| `subtotal` | DECIMAL (10,2) | `jumlah` * `harga` saat transaksi |
+| `id_detail` | INT | Primary Key, Auto Increment |
+| `id_transaksi` | INT | Foreign Key ➔ `transaksi.id_transaksi` (`NOT NULL`, `ON DELETE CASCADE`) |
+| `id_buku` | INT | Foreign Key ➔ `buku.id_buku` (`NOT NULL`, `ON DELETE RESTRICT`) |
+| `jumlah` | INT | Kuantitas buku dibeli (`NOT NULL`, `DEFAULT 1`) |
+| `subtotal` | DECIMAL(10,2) | `jumlah` * `harga` saat transaksi (`NOT NULL`) |
 
-### 5. Tabel `log_inventori` (log inventori)
+### 5. Tabel `log_inventori` (Log Inventori)
 | Kolom | Tipe Data | Keterangan |
 | :--- | :--- | :--- |
-| `id_log` | INT (11) | Primary Key, Auto Increment |
-| `id_user` | INT (11) | Foreign Key ➔ `user.id_user` |
-| `id_buku` | INT (11) | Foreign Key ➔ `buku.id_buku` |
-| `datetime` | DATETIME | Kapan aksi dilakukan |
-| `desc` | TEXT | Deskripsi aksi |
-| `type` | ENUM(CREATE,UPDATE,DELETE) | Tipe aksi |
----
+| `id_log` | INT | Primary Key, Auto Increment |
+| `id_user` | INT | Foreign Key ➔ `users.id_user` (`NULL`, `ON DELETE SET NULL`) |
+| `username` | VARCHAR(50) | Nama pengguna yang melakukan aksi (`NOT NULL`) |
+| `id_buku` | INT | Foreign Key ➔ `buku.id_buku` (`NULL`, `ON DELETE SET NULL`) |
+| `datetime` | TIMESTAMP | Kapan aksi dilakukan (`DEFAULT CURRENT_TIMESTAMP`) |
+| `desc` | TEXT | Deskripsi aksi (`NOT NULL`) |
+| `type` | ENUM('CREATE', 'UPDATE', 'DELETE', 'TRANSAKSI') | Tipe aksi (`NOT NULL`) 
+
 
 ## 📊 Diagram
 ### Diagram Penggunaan
@@ -178,7 +179,6 @@ flowchart TD
 ```
 ### Flowmap (2)
 ![Flowmap](readme/flowmap.png)
-
 ### Skema Tabel
 ```mermaid
 erDiagram
@@ -190,17 +190,17 @@ erDiagram
     }
 
     buku {
-        varchar id_buku PK
+        int id_buku PK
         varchar judul
         varchar penulis
         decimal harga
         int stok
-        year tahun_terbit
+        int tahun_terbit
     }
 
     transaksi {
-        varchar id_transaksi PK
-        datetime waktu
+        int id_transaksi PK
+        timestamp datetime
         decimal total_belanja
         decimal tunai
         int id_user FK
@@ -208,8 +208,8 @@ erDiagram
 
     detail_transaksi {
         int id_detail PK
-        varchar id_transaksi FK
-        varchar id_buku FK
+        int id_transaksi FK
+        int id_buku FK
         int jumlah
         decimal subtotal
     }
@@ -217,19 +217,19 @@ erDiagram
     log_inventori {
         int id_log PK
         int id_user FK
-        varchar id_buku FK
-        datetime datetime
+        varchar username
+        int id_buku FK
+        timestamp datetime
         text desc
-        enum type 
+        enum type
     }
 
     users ||--o{ transaksi : "melayani"
-    users ||--o{ log_inventori : "melakukan aksi"
+    users |o--o{ log_inventori : "melakukan aksi"
     buku ||--o{ detail_transaksi : "termasuk dalam"
     transaksi ||--|{ detail_transaksi : "memiliki"
-    buku ||--o{ log_inventori : "dicatat pada"
+    buku |o--o{ log_inventori : "dicatat pada"
 ```
-
 ### Class Diagram
 ```mermaid
 classDiagram

@@ -63,7 +63,6 @@ public class MainFrameAdmin extends javax.swing.JFrame {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
         bukuPanel1 = new bookapp.bookapp.panel.BukuPanel();
-        kasirPanel2 = new bookapp.bookapp.panel.KasirPanel();
         laporanPanel2 = new bookapp.bookapp.panel.LaporanPanel();
         logPanel1 = new bookapp.bookapp.panel.LogPanel();
         logoutPanel1 = new bookapp.bookapp.panel.LogoutPanel();
@@ -71,7 +70,6 @@ public class MainFrameAdmin extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jTabbedPane1.addTab("Buku", bukuPanel1);
-        jTabbedPane1.addTab("Kasir", kasirPanel2);
         jTabbedPane1.addTab("Laporan", laporanPanel2);
         jTabbedPane1.addTab("Log", logPanel1);
         jTabbedPane1.addTab("Logout", logoutPanel1);
@@ -80,7 +78,7 @@ public class MainFrameAdmin extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 406, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -118,7 +116,6 @@ public class MainFrameAdmin extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private bookapp.bookapp.panel.BukuPanel bukuPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private bookapp.bookapp.panel.KasirPanel kasirPanel2;
     private bookapp.bookapp.panel.LaporanPanel laporanPanel2;
     private bookapp.bookapp.panel.LogPanel logPanel1;
     private bookapp.bookapp.panel.LogoutPanel logoutPanel1;
